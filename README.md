@@ -11,6 +11,8 @@ The build scripts and converters for the MBR payload are very noobish. You will 
  - The [Nyan Cat midi file](http://morganatmacsd.tumblr.com/post/7275362575/midi-file-for-nyan-cat-song)
  - Something to convert binary files to C arrays, to embed the MBR payload into the trojan (I used the export function of the HxD hex editor)
  - qemu for Windows (additional, if you want to test the payload)
+ 
+If you want to use the exe to batch converter, don't forget to append -zip to it's command line, because this gives way smaller file sizes and also works on Windows XP.
 
 You'll also need Visual Studio 2015 to build the actual Trojan. Make sure you selected the Release configuration, because Debug is not configured properly.
 
