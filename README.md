@@ -18,4 +18,4 @@ You'll also need Visual Studio 2015 to build the actual Trojan. Make sure you se
 
 The ASM code may look very noobish, but this is my first big thing written in assembly.
 
-If you want to know what the trojan does, look at my thread on danooct1's forum which I will create soon.
+If you want to know what the trojan does, look at [my thread on danooct1's forum](http://danooct1.com/forum/viewtopic.php?f=12&t=470)
