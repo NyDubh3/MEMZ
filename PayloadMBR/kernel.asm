@@ -13,11 +13,6 @@ org 0x7c00
 	pop dx
 %endmacro
 
-%macro beepinit 0
-	mov al, 182
-	out 43h, al
-%endmacro
-
 %macro beepfreq 0
 	out 42h, al
 	mov al, ah
@@ -37,7 +32,9 @@ org 0x7c00
 %endmacro
 
 startanimation:
-	beepinit
+	; Init PC speaker
+	mov al, 182
+	out 43h, al
 	
 	; Remove blinking
 	mov ax, 1003h
@@ -51,17 +48,13 @@ startanimation:
 	mov cx, 0xb800 ; Set base address for video memory
 	mov es, cx
 	
+	; Clear screen
 	mov ax, 0
-	
-	clscr:
-		stosw
-		
-		cmp di, 4000
-		jle clscr
+	mov cx, 2000
+	rep stosw
 	
 	mov si, image+24000+476
-	mov cx, 0
-	mov di, cx
+	mov di, 0
 	
 	beepon
 	mov bl, 1

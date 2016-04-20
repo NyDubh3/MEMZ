@@ -1,17 +1,13 @@
-; Read from disk
-mov ah, 2
-mov al, 4
-mov ch, 0
-mov cl, 2
-mov dh, 0
-mov bx, daddr
-mov es, bx
-mov bx, compressed
-int 13h
-
 mov bx, daddr
 mov es, bx
 mov ds, bx
+
+; Read from disk
+mov ax, 0x0204
+mov cx, 0x0002
+mov dh, 0
+mov bx, compressed
+int 13h
 
 xor ax, ax
 mov bx, ax
