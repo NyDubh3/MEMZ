@@ -179,7 +179,7 @@ msglen: equ 76
 times 510 - ($ - $$) db 0
 dw 0xAA55 ; Boot sector signature
 
-comp: incbin "../Data/compressed.bin"
+comp: incbin "Data/compressed.bin"
 compsize: equ $-comp
 
 times 4*1024 - ($ - $$) db 0
