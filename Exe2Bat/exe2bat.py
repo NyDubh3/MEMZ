@@ -1,4 +1,4 @@
-# Very poor coded exe (or other file) to batch converter.
+# Very poorly coded exe (or other file) to batch converter.
 #
 # If you want to use it, don't forget to append -zip to the command line,
 # because this is the best method for packing the file.
@@ -10,7 +10,7 @@ for_xp = "-xp" in sys.argv
 use_script = "-zip" in sys.argv or "-xp" in sys.argv
 
 ZIP_NAME = "z.zip"
-EXE_NAME = "MEMZ.exe"
+EXE_NAME = sys.argv[3]
 BASE64_NAME = "x"
 JS_NAME = "x.js"
 
