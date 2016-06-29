@@ -278,7 +278,6 @@ DWORD WINAPI messageBoxThread(LPVOID);
 LRESULT CALLBACK msgBoxHook(int, WPARAM, LPARAM);
 int payloadChangeText(int, int);
 BOOL CALLBACK EnumWindowProc(HWND, LPARAM);
-BOOL CALLBACK EnumWindowProc2(HWND, LPARAM);
 void enumerateChildren(HWND);
 int payloadSound(int, int);
 int payloadPuzzle(int, int);
