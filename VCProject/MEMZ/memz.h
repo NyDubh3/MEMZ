@@ -4,6 +4,7 @@
 #include <Psapi.h>
 
 #include "data.h"
+#include "payloads.h"
 
 int random();
 void strReverseW(LPWSTR str);

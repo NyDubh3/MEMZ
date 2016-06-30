@@ -1,5 +1,19 @@
 #include "memz.h"
 
+const PAYLOAD payloads[] = {
+	{ payloadExecute, 30000 },
+	{ payloadCursor, 40000 },
+	{ payloadKeyboard, 20000 },
+	{ payloadSound, 60000 },
+	{ payloadBlink, 30000 },
+	{ payloadMessageBox, 20000 },
+	{ payloadChangeText, 40000 },
+	{ payloadPIP, 80000 },
+	{ payloadPuzzle, 15000 },
+};
+
+const size_t nPayloads = sizeof(payloads) / sizeof(PAYLOAD);
+
 DWORD WINAPI payloadThread(LPVOID parameter) {
 	int delay = 0;
 	int times = 0;
