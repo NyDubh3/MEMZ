@@ -31,5 +31,6 @@ int payloadSound(int, int);
 int payloadPuzzle(int, int);
 int payloadKeyboard(int, int);
 int payloadPIP(int, int);
+int payloadDrawErrors(int, int);
 
 extern int scrw, scrh;
