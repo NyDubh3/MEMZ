@@ -48,7 +48,7 @@ const char *msgs[] = {
 	"YOU KILLED MY TROJAN!\r\nNow you are going to die.",
 	"REST IN PISS, FOREVER MISS.",
 	"I WARNED YOU...",
-	"HAHA N00B L2P R3KT",
+	"HAHA N00B L2P G3T R3KT",
 	"You failed at your 1337 h4x0r skillz.",
 	"YOU TRIED SO HARD AND GOT SO FAR, BUT IN THE END, YOUR PC WAS STILL FUCKED!",
 	"HACKER!\r\nENJOY BAN!",
@@ -59,6 +59,12 @@ const char *msgs[] = {
 	"VIRUS PRANK (GONE WRONG)",
 	"ENJOY THE NYAN CAT",
 	"GET MLG ANTIVIRUS NEXT TIME",
+	"You are an idiot!\r\nHA HA HA HA HA HA HA",
+	"#MakeMalwareGreatAgain",
+	"SOMEBODY ONCE TOLD ME THE MEMZ ARE GONNA ROLL ME",
+	"Why did you even tried to kill MEMZ?\r\nYour PC is fucked anyway.",
+	"SecureBoot sucks.",
+	"gr8 m8 i r8 8/8"
 };
 
 // Split into 2 parts to save some space.
