@@ -21,5 +21,25 @@
     <ClCompile Include="win32_crt_float.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="payloads.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="utils.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="data.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="memz.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="data.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="payloads.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
