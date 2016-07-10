@@ -339,13 +339,16 @@ DWORD WINAPI keyboardThread(LPVOID lParam) {
 				Sleep(100);
 			}
 		} else if ((GetKeyState(VK_SHIFT) & GetKeyState(VK_CONTROL) & GetKeyState('S')) & 0x8000) {
-			for (int p = 0; p < nPayloads; p++) {
-				payloads[p].runtime += 2000;
-				payloads[p].times += 10;
+			if (enablePayloads) {
+				for (int p = 0; p < nPayloads; p++) {
+					if (SendMessage(payloads[p].btn, BM_GETCHECK, 0, NULL) == BST_CHECKED) {
+						payloads[p].delay = payloads[p].payloadFunction(payloads[p].times++, payloads[p].runtime += payloads[p].delay, TRUE);
+					}
+				}
 			}
 		}
 
-		Sleep(100);
+		Sleep(10);
 	}
 
 	return 0;

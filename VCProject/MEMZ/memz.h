@@ -47,18 +47,18 @@ DWORD WINAPI keyboardThread(LPVOID lParam);
 extern BOOLEAN enablePayloads;
 #endif
 
-int payloadExecute(int, int);
-int payloadCursor(int, int);
-int payloadBlink(int, int);
-int payloadMessageBox(int, int);
+int payloadExecute(PAYLOADFUNC);
+int payloadCursor(PAYLOADFUNC);
+int payloadBlink(PAYLOADFUNC);
+int payloadMessageBox(PAYLOADFUNC);
 DWORD WINAPI messageBoxThread(LPVOID);
 LRESULT CALLBACK msgBoxHook(int, WPARAM, LPARAM);
-int payloadChangeText(int, int);
+int payloadChangeText(PAYLOADFUNC);
 BOOL CALLBACK EnumChildProc(HWND hwnd, LPARAM lParam);
-int payloadSound(int, int);
-int payloadPuzzle(int, int);
-int payloadKeyboard(int, int);
-int payloadPIP(int, int);
-int payloadDrawErrors(int, int);
+int payloadSound(PAYLOADFUNC);
+int payloadPuzzle(PAYLOADFUNC);
+int payloadKeyboard(PAYLOADFUNC);
+int payloadPIP(PAYLOADFUNC);
+int payloadDrawErrors(PAYLOADFUNC);
 
 extern int scrw, scrh;

