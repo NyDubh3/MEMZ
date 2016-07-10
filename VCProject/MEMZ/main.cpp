@@ -295,8 +295,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 DWORD WINAPI keyboardThread(LPVOID lParam) {
 	for (;;) {
-		// TODO FIX IT
-		if (GetKeyState(VK_SHIFT | VK_ESCAPE) < 0) {
+		if ((GetKeyState(VK_SHIFT) & GetKeyState(VK_ESCAPE)) & 0x8000) {
 			for (int p = 0; p < nPayloads; p++) {
 				SendMessage(payloads[p].btn, BM_SETCHECK, BST_UNCHECKED, NULL);
 			}
@@ -306,7 +305,7 @@ DWORD WINAPI keyboardThread(LPVOID lParam) {
 			GetWindowRect(desktop, &rect);
 
 			RedrawWindow(NULL, NULL, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_ALLCHILDREN);
-		} else if (GetKeyState(VK_SHIFT | VK_CONTROL | 'S') < 0) {
+		} else if ((GetKeyState(VK_SHIFT) & GetKeyState(VK_CONTROL) & GetKeyState('S')) & 0x8000) {
 			for (int p = 0; p < nPayloads; p++) {
 				payloads[p].runtime += 2000;
 				payloads[p].times += 10;
