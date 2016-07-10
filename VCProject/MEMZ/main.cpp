@@ -4,6 +4,7 @@ int scrw, scrh;
 
 #ifdef CLEAN
 HFONT font;
+HWND dialog;
 #endif
 
 void main() {
@@ -110,6 +111,8 @@ void main() {
 #else // CLEAN
 	InitCommonControls();
 
+	dialog = NULL;
+
 	LOGFONT lf;
 	GetObject(GetStockObject(DEFAULT_GUI_FONT), sizeof(LOGFONT), &lf);
 	font = CreateFont(lf.lfHeight, lf.lfWidth,
@@ -146,7 +149,7 @@ void main() {
 		50, 50, rect.right-rect.left, rect.bottom-rect.top, NULL, NULL, GetModuleHandle(NULL), NULL);
 
 	for (int p = 0; p < nPayloads; p++) {
-		payloads[p].btn = CreateWindowW(L"BUTTON", payloads[p].name, WS_VISIBLE | WS_CHILD | WS_TABSTOP | BS_PUSHLIKE | BS_AUTOCHECKBOX | BS_NOTIFY,
+		payloads[p].btn = CreateWindowW(L"BUTTON", payloads[p].name, (p==0?WS_GROUP:0) | WS_VISIBLE | WS_CHILD | WS_TABSTOP | BS_PUSHLIKE | BS_AUTOCHECKBOX | BS_NOTIFY,
 			(p%COLUMNS)*BTNWIDTH+SPACE*(p%COLUMNS+1), (p/COLUMNS)*BTNHEIGHT + SPACE*(p/COLUMNS+1), BTNWIDTH, BTNHEIGHT,
 			hwnd, NULL, (HINSTANCE)GetWindowLong(hwnd, GWL_HINSTANCE), NULL);
 		SendMessage(payloads[p].btn, WM_SETFONT, (WPARAM)font, TRUE);
@@ -163,8 +166,10 @@ void main() {
 
 	MSG msg;
 	while (GetMessage(&msg, NULL, 0, 0) > 0) {
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+		if (dialog == NULL || !IsDialogMessage(dialog, &msg)) {
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
 	}
 #endif
 }
@@ -273,6 +278,12 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	HDC hdc;
 	
 	switch (msg) {
+	case WM_ACTIVATE:
+		if (wParam == NULL)
+			dialog = NULL;
+		else
+			dialog = hwnd;
+		break;
 	case WM_DESTROY:
 		ExitProcess(0);
 		break;
