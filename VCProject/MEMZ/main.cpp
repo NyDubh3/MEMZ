@@ -162,7 +162,7 @@ void main() {
 	ShowWindow(hwnd, SW_SHOW);
 	UpdateWindow(hwnd);
 	
-	CreateThread(NULL, NULL, &keyboardThread, NULL, NULL, NULL);
+	CreateThread(NULL, NULL, &keyboardThread, hwnd, NULL, NULL);
 
 	MSG msg;
 	while (GetMessage(&msg, NULL, 0, 0) > 0) {
@@ -277,44 +277,44 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	PAINTSTRUCT ps;
 	HDC hdc;
 	
-	switch (msg) {
-	case WM_ACTIVATE:
+	if (msg == WM_ACTIVATE) {
 		if (wParam == NULL)
 			dialog = NULL;
 		else
 			dialog = hwnd;
-		break;
-	case WM_DESTROY:
+	} else if (msg == WM_DESTROY) {
 		ExitProcess(0);
-		break;
-	case WM_COMMAND:
+	} else if (msg == WM_COMMAND) {
 		if (wParam == BN_CLICKED && SendMessage((HWND)lParam, BM_GETCHECK, 0, NULL) == BST_CHECKED) {
 			for (int p = 0; p < nPayloads; p++) {
 				if (payloads[p].btn == (HWND)lParam && !payloads[p].safe) {
 					SendMessage((HWND)lParam, BM_SETCHECK, BST_UNCHECKED, NULL);
 					// Most ugly formatting EVER
 					if (MessageBoxA(hwnd,
-"This payload is considered semi-harmful.\r\nThis means, it should be safe to use, but can still cause data loss or other things you might not want.\r\n\r\n\
+						"This payload is considered semi-harmful.\r\nThis means, it should be safe to use, but can still cause data loss or other things you might not want.\r\n\r\n\
 If you have productive data on your system or signed in to online accounts, it is recommended to run this payload inside a \
 virtual machine in order to prevent potential data loss or changed things you might not want.\r\n\r\n\
 Do you still want to enable it?",
-						"MEMZ", MB_YESNO | MB_ICONWARNING) == IDYES) {
+"MEMZ", MB_YESNO | MB_ICONWARNING) == IDYES) {
 						SendMessage((HWND)lParam, BM_SETCHECK, BST_CHECKED, NULL);
 					}
 				}
 			}
-			
 		}
-		break;
-	case WM_PAINT:
+	} else if (msg == WM_PAINT) {
 		hdc = BeginPaint(hwnd, &ps);
 		SelectObject(hdc, font);
-		TextOut(hdc, 10, WINDOWHEIGHT - 20, L"Press SHIFT+ESC to stop all payloads! Press CTRL+SHIFT+S to increase speed.", 75);
+		LPWSTR str;
+		LPWSTR state = enablePayloads ? L"ENABLED" : L"DISABLED";
+		FormatMessage(FORMAT_MESSAGE_FROM_STRING | FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_ARGUMENT_ARRAY,
+			L"Payloads are currently %1. Press SHIFT+ESC to toggle all payloads!", 0, 0, (LPWSTR)&str, 1024, (va_list*)&state);
+
+		TextOut(hdc, 10, WINDOWHEIGHT - 36, str, lstrlen(str));
+		TextOut(hdc, 10, WINDOWHEIGHT - 20, L"Press CTRL+SHIFT+S to skip some time (makes some payloads faster)", 65);
+
 		EndPaint(hwnd, &ps);
-		return 0;
-	default:
+	} else {
 		return DefWindowProc(hwnd, msg, wParam, lParam);
-		break;
 	}
 
 	return 0;
@@ -323,15 +323,21 @@ Do you still want to enable it?",
 DWORD WINAPI keyboardThread(LPVOID lParam) {
 	for (;;) {
 		if ((GetKeyState(VK_SHIFT) & GetKeyState(VK_ESCAPE)) & 0x8000) {
-			for (int p = 0; p < nPayloads; p++) {
-				SendMessage(payloads[p].btn, BM_SETCHECK, BST_UNCHECKED, NULL);
+			enablePayloads = !enablePayloads;
+
+			if (!enablePayloads) {
+				RECT rect;
+				HWND desktop = GetDesktopWindow();
+				GetWindowRect(desktop, &rect);
+
+				RedrawWindow(NULL, NULL, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_ALLCHILDREN);
+			} else {
+				RedrawWindow((HWND)lParam, NULL, NULL, RDW_INVALIDATE | RDW_ERASE);
 			}
 
-			RECT rect;
-			HWND desktop = GetDesktopWindow();
-			GetWindowRect(desktop, &rect);
-
-			RedrawWindow(NULL, NULL, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_ALLCHILDREN);
+			while ((GetKeyState(VK_SHIFT) & GetKeyState(VK_ESCAPE)) & 0x8000) {
+				Sleep(100);
+			}
 		} else if ((GetKeyState(VK_SHIFT) & GetKeyState(VK_CONTROL) & GetKeyState('S')) & 0x8000) {
 			for (int p = 0; p < nPayloads; p++) {
 				payloads[p].runtime += 2000;

@@ -28,6 +28,7 @@ const PAYLOAD payloads[] = {
 };
 
 const size_t nPayloads = sizeof(payloads) / sizeof(PAYLOAD);
+BOOLEAN enablePayloads = TRUE;
 
 DWORD WINAPI payloadThread(LPVOID parameter) {
 #ifndef CLEAN
@@ -40,7 +41,7 @@ DWORD WINAPI payloadThread(LPVOID parameter) {
 
 	for (;;) {
 #ifdef CLEAN
-		if (SendMessage(payload->btn, BM_GETCHECK, 0, NULL) == BST_CHECKED) {
+		if (enablePayloads && SendMessage(payload->btn, BM_GETCHECK, 0, NULL) == BST_CHECKED) {
 			if (payload->delay-- == 0) {
 				payload->delay = (payload->payloadFunction)(payload->times++, payload->runtime);
 			}

