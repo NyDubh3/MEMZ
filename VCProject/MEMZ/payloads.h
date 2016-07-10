@@ -7,6 +7,7 @@ typedef struct {
 	wchar_t *name;
 	HWND btn;
 	int delay, times, runtime;
+	BOOLEAN safe;
 #else
 	int delay;
 #endif
