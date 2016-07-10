@@ -2,16 +2,16 @@
 
 #ifdef CLEAN
 PAYLOAD payloads[] = {
-	{ payloadExecute, L"Open random websites/programs", NULL, 0, 0, 0, FALSE },
-	{ payloadCursor, L"Random cursor movement", NULL, 0, 0, 0, TRUE },
-	{ payloadKeyboard, L"Random keyboard input", NULL, 0, 0, 0, FALSE },
-	{ payloadSound, L"Random error sounds", NULL, 0, 0, 0, TRUE },
-	{ payloadBlink, L"Flashing screen", NULL, 0, 0, 0, TRUE },
-	{ payloadMessageBox, L"Message boxes", NULL, 0, 0, 0, TRUE },
-	{ payloadDrawErrors, L"Draw error icons", NULL, 0, 0, 0, TRUE },
-	{ payloadChangeText, L"Reverse text on screen", NULL, 0, 0, 0, FALSE },
-	{ payloadPIP, L"Render screen into screen", NULL, 0, 0, 0, TRUE },
-	{ payloadPuzzle, L"Screen glitches", NULL, 0, 0, 0, TRUE }
+	{ payloadExecute, L"Open random websites/programs", NULL, 0, 0, 0, 0, FALSE },
+	{ payloadCursor, L"Random cursor movement", NULL, 0, 0, 0, 0, TRUE },
+	{ payloadKeyboard, L"Random keyboard input", NULL, 0, 0, 0, 0, FALSE },
+	{ payloadSound, L"Random error sounds", NULL, 0, 0, 0, 0, TRUE },
+	{ payloadBlink, L"Flashing screen", NULL, 0, 0, 0, 0, TRUE },
+	{ payloadMessageBox, L"Message boxes", NULL, 0, 0, 0, 0, TRUE },
+	{ payloadDrawErrors, L"Draw error icons", NULL, 0, 0, 0, 0, TRUE },
+	{ payloadChangeText, L"Reverse text on screen", NULL, 0, 0, 0, 0, FALSE },
+	{ payloadPIP, L"Render screen into screen", NULL, 0, 0, 0, 0, TRUE },
+	{ payloadPuzzle, L"Screen glitches", NULL, 0, 0, 0, 0, TRUE }
 #else
 const PAYLOAD payloads[] = {
 	{ payloadExecute, 30000 },
@@ -42,8 +42,9 @@ DWORD WINAPI payloadThread(LPVOID parameter) {
 	for (;;) {
 #ifdef CLEAN
 		if (enablePayloads && SendMessage(payload->btn, BM_GETCHECK, 0, NULL) == BST_CHECKED) {
-			if (payload->delay-- == 0) {
+			if (payload->delaytime++ >= payload->delay) {
 				payload->delay = (payload->payloadFunction)(payload->times++, payload->runtime, FALSE);
+				payload->delaytime = 0;
 			}
 
 			payload->runtime++;

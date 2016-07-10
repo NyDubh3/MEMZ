@@ -6,7 +6,7 @@ typedef struct {
 	int(*payloadFunction)(int, int, BOOLEAN);
 	wchar_t *name;
 	HWND btn;
-	int delay, times, runtime;
+	int delay, times, runtime, delaytime;
 	BOOLEAN safe;
 #else
 	int(*payloadFunction)(int, int);

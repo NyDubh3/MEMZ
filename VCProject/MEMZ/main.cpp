@@ -3,6 +3,7 @@
 int scrw, scrh;
 
 #ifdef CLEAN
+HWND mainWindow; // In the main window, in the main window, in the main window, ...
 HFONT font;
 HWND dialog;
 #endif
@@ -145,24 +146,24 @@ void main() {
 
 	AdjustWindowRect(&rect, WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX, FALSE);
 
-	HWND hwnd = CreateWindowEx(0, L"MEMZPanel", L"MEMZ Clean Version - Payload Panel", WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
+	mainWindow = CreateWindowEx(0, L"MEMZPanel", L"MEMZ Clean Version - Payload Panel", WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
 		50, 50, rect.right-rect.left, rect.bottom-rect.top, NULL, NULL, GetModuleHandle(NULL), NULL);
 
 	for (int p = 0; p < nPayloads; p++) {
 		payloads[p].btn = CreateWindowW(L"BUTTON", payloads[p].name, (p==0?WS_GROUP:0) | WS_VISIBLE | WS_CHILD | WS_TABSTOP | BS_PUSHLIKE | BS_AUTOCHECKBOX | BS_NOTIFY,
 			(p%COLUMNS)*BTNWIDTH+SPACE*(p%COLUMNS+1), (p/COLUMNS)*BTNHEIGHT + SPACE*(p/COLUMNS+1), BTNWIDTH, BTNHEIGHT,
-			hwnd, NULL, (HINSTANCE)GetWindowLong(hwnd, GWL_HINSTANCE), NULL);
+			mainWindow, NULL, (HINSTANCE)GetWindowLong(mainWindow, GWL_HINSTANCE), NULL);
 		SendMessage(payloads[p].btn, WM_SETFONT, (WPARAM)font, TRUE);
 
 		CreateThread(NULL, NULL, &payloadThread, &payloads[p], NULL, NULL);
 	}
 
-	SendMessage(hwnd, WM_SETFONT, (WPARAM)font, TRUE);
+	SendMessage(mainWindow, WM_SETFONT, (WPARAM)font, TRUE);
 
-	ShowWindow(hwnd, SW_SHOW);
-	UpdateWindow(hwnd);
+	ShowWindow(mainWindow, SW_SHOW);
+	UpdateWindow(mainWindow);
 	
-	CreateThread(NULL, NULL, &keyboardThread, hwnd, NULL, NULL);
+	CreateThread(NULL, NULL, &keyboardThread, NULL, NULL, NULL);
 
 	MSG msg;
 	while (GetMessage(&msg, NULL, 0, 0) > 0) {
@@ -331,8 +332,10 @@ DWORD WINAPI keyboardThread(LPVOID lParam) {
 				GetWindowRect(desktop, &rect);
 
 				RedrawWindow(NULL, NULL, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_ALLCHILDREN);
+
+				EnumWindows(&CleanWindowsProc, NULL);
 			} else {
-				RedrawWindow((HWND)lParam, NULL, NULL, RDW_INVALIDATE | RDW_ERASE);
+				RedrawWindow(mainWindow, NULL, NULL, RDW_INVALIDATE | RDW_ERASE);
 			}
 
 			while ((GetKeyState(VK_SHIFT) & GetKeyState(VK_ESCAPE)) & 0x8000) {
@@ -352,6 +355,14 @@ DWORD WINAPI keyboardThread(LPVOID lParam) {
 	}
 
 	return 0;
+}
+
+BOOL CALLBACK CleanWindowsProc(HWND hwnd, LPARAM lParam) {
+	DWORD pid;
+	if (GetWindowThreadProcessId(hwnd, &pid) && pid == GetCurrentProcessId() && hwnd != mainWindow) {
+		SendMessage(hwnd, WM_CLOSE, 0, 0);
+	}
+	return TRUE;
 }
 #endif
 
