@@ -1,6 +1,6 @@
 // If this is defined, the trojan will disable all destructive payloads
 // and does display a GUI to manually control all of the non-destructive ones.
-//#define CLEAN
+#define CLEAN
 
 #ifdef CLEAN
 // Enable XP styles
