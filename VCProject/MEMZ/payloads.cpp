@@ -9,8 +9,8 @@ PAYLOAD payloads[] = {
 	{ payloadBlink, L"Flashing screen", NULL, 0, 0, 0, 0, TRUE },
 	{ payloadMessageBox, L"Message boxes", NULL, 0, 0, 0, 0, TRUE },
 	{ payloadDrawErrors, L"Draw error icons", NULL, 0, 0, 0, 0, TRUE },
-	{ payloadChangeText, L"Reverse text on screen", NULL, 0, 0, 0, 0, FALSE },
-	{ payloadPIP, L"Render screen into screen", NULL, 0, 0, 0, 0, TRUE },
+	{ payloadChangeText, L"Reverse text", NULL, 0, 0, 0, 0, FALSE },
+	{ payloadPIP, L"Tunnel effect", NULL, 0, 0, 0, 0, TRUE },
 	{ payloadPuzzle, L"Screen glitches", NULL, 0, 0, 0, 0, TRUE }
 #else
 	{ payloadExecute, 30000 },
