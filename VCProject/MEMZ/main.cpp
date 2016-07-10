@@ -295,7 +295,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 					// Most ugly formatting EVER
 					if (MessageBoxA(hwnd,
 "This payload is considered semi-harmful.\r\nThis means, it should be safe to use, but can still cause data loss or other things you might not want.\r\n\r\n\
-If you have productive data on your system or signed in to online accounts, it is recommended to run this payload inside a virtual machine to prevent potential data loss or changed things you don't want.\r\n\r\n\
+If you have productive data on your system or signed in to online accounts, it is recommended to run this payload inside a \
+virtual machine in order to prevent potential data loss or changed things you might not want.\r\n\r\n\
 Do you still want to enable it?",
 						"MEMZ", MB_YESNO | MB_ICONWARNING) == IDYES) {
 						SendMessage((HWND)lParam, BM_SETCHECK, BST_CHECKED, NULL);
