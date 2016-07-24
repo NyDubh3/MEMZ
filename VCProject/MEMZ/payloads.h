@@ -1,24 +1,31 @@
 #pragma once
 #include "memz.h"
 
+#define PAYLOADHOST(name) DWORD (WINAPI name)(LPVOID parameter)
+
 typedef struct {
+	PAYLOADHOST(*payloadHost);
+	void *payloadFunction;
+
 #ifdef CLEAN
-	int(*payloadFunction)(int, int, BOOLEAN);
 	wchar_t *name;
-	HWND btn;
-	int delay, times, runtime, delaytime;
 	BOOLEAN safe;
+
+	HWND btn;
+	int delaytime, delay, runtime, times;
 #else
-	int(*payloadFunction)(int, int);
-	int delay;
+	int startDelay;
+	int delaytime, delay, runtime, times;
 #endif
 } PAYLOAD;
 
 #ifdef CLEAN
-#define PAYLOADFUNC int times, int runtime, BOOLEAN skip
+#define PAYLOADFUNCTIONDEFAULT(name) int name (int times, int runtime, BOOLEAN skip)
+#define PAYLOADFUNCTIONVISUAL(name) int name (int times, int runtime, BOOLEAN skip, HWND hwnd, HDC hdc, LPRECT rekt, int w, int h)
 #define PAYLOADHEAD if (skip) goto out;
 #else
-#define PAYLOADFUNC int times, int runtime
+#define PAYLOADFUNCTIONDEFAULT(name) int name (int times, int runtime)
+#define PAYLOADFUNCTIONVISUAL(name) int name (int times, int runtime, HWND hwnd, HDC hdc, LPRECT rekt, int w, int h)
 #define PAYLOADHEAD
 #endif
 

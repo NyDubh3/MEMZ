@@ -32,7 +32,8 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 int random();
 void strReverseW(LPWSTR str);
 
-DWORD WINAPI payloadThread(LPVOID);
+PAYLOADHOST(payloadHostDefault);
+PAYLOADHOST(payloadHostVisual);
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
@@ -48,18 +49,16 @@ extern BOOLEAN enablePayloads;
 BOOL CALLBACK CleanWindowsProc(HWND hwnd, LPARAM lParam);
 #endif
 
-int payloadExecute(PAYLOADFUNC);
-int payloadCursor(PAYLOADFUNC);
-int payloadBlink(PAYLOADFUNC);
-int payloadMessageBox(PAYLOADFUNC);
+PAYLOADFUNCTIONDEFAULT(payloadExecute);
+PAYLOADFUNCTIONDEFAULT(payloadCursor);
+PAYLOADFUNCTIONVISUAL(payloadInvert);
+PAYLOADFUNCTIONDEFAULT(payloadMessageBox);
 DWORD WINAPI messageBoxThread(LPVOID);
 LRESULT CALLBACK msgBoxHook(int, WPARAM, LPARAM);
-int payloadChangeText(PAYLOADFUNC);
+PAYLOADFUNCTIONDEFAULT(payloadReverseText);
 BOOL CALLBACK EnumChildProc(HWND hwnd, LPARAM lParam);
-int payloadSound(PAYLOADFUNC);
-int payloadPuzzle(PAYLOADFUNC);
-int payloadKeyboard(PAYLOADFUNC);
-int payloadPIP(PAYLOADFUNC);
-int payloadDrawErrors(PAYLOADFUNC);
-
-extern int scrw, scrh;
+PAYLOADFUNCTIONDEFAULT(payloadSound);
+PAYLOADFUNCTIONVISUAL(payloadGlitches);
+PAYLOADFUNCTIONDEFAULT(payloadKeyboard);
+PAYLOADFUNCTIONVISUAL(payloadTunnel);
+PAYLOADFUNCTIONVISUAL(payloadDrawErrors);
