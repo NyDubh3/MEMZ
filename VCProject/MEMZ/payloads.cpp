@@ -275,17 +275,23 @@ PAYLOADHOST(payloadHostCrazyBus) {
 				wavedata[i] = (char)(((i % freq) / ((float)freq)) * 100);
 			}
 
+#ifdef CLEAN
 			waveOutReset(hwo);
+#endif
 			waveOutWrite(hwo, &hdr, sizeof(hdr));
 
-			while (!(hdr.dwFlags & WHDR_DONE) && (enablePayloads && SendMessage(payload->btn, BM_GETCHECK, 0, NULL) == BST_CHECKED)) {
+			while (!(hdr.dwFlags & WHDR_DONE)
+#ifdef CLEAN
+				&&  (enablePayloads && SendMessage(payload->btn, BM_GETCHECK, 0, NULL) == BST_CHECKED)
+#endif
+				) {
 				Sleep(1);
 			}
 
+#ifdef CLEAN
 			if (!enablePayloads || SendMessage(payload->btn, BM_GETCHECK, 0, NULL) != BST_CHECKED) {
 				waveOutPause(hwo);
 			}
-#ifdef CLEAN
 		} else {
 			Sleep(10);
 		}
