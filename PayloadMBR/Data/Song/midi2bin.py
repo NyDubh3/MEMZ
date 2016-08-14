@@ -18,7 +18,7 @@ with open(sys.argv[2], "wb") as out:
 			if event.velocity == 0:
 				d += int(round(event.tick/48.0, 0))
 				p = pitchconv(event.pitch)
-				out.write(chr(p & 0xff) + chr(d << 5 | p >> 8))
+				out.write(chr(p & 0xff) + chr((d - 1) << 5 | p >> 8))
 				b = 0
 			else:
 				d = int(round(event.tick/48.0, 0))

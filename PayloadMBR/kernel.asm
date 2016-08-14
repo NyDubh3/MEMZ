@@ -57,7 +57,7 @@ startanimation:
 	mov di, 0
 	
 	beepon
-	mov bl, 1
+	mov bl, 0
 	
 	startmsg:
 		sleep 0x0, 0x6000
@@ -71,7 +71,7 @@ startanimation:
 		
 		note:
 			dec bl
-			cmp bl, 0
+			cmp bl, -1
 			jne startmsg
 			
 			push si
@@ -85,6 +85,7 @@ startanimation:
 			
 			shr ch, 5
 			shl ch, 2
+			add ch, 3
 			mov bl, ch
 			
 			mov dx, si
@@ -104,7 +105,6 @@ startanimation:
 	mov ax, 0xb800
 	mov es, ax
 	
-	dec bl
 	jmp transition
 	
 	wrimg:
@@ -140,7 +140,7 @@ startanimation:
 		
 		nextnote:
 			dec bl
-			cmp bl, 0
+			cmp bl, -1
 			jne wrimg
 			
 			push si
