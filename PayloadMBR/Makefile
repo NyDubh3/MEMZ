@@ -1,11 +1,14 @@
 
-IMAGES = $(wildcard Data/Image/frames/*.png)
+IMAGES = $(sort $(wildcard Data/Image/frames/*.png))
 MUSIC  = Data/Song/nyan.mid
 
-all: disk.img
+all: disk.img dir
+
+dir:
+	mkdir build || true
 
 build/image.bin: $(IMAGES)
-	python2 Data/Image/png2bin.py `echo $(IMAGES) | sort -h` $@
+	python2 Data/Image/png2bin.py $(IMAGES) $@
 
 build/song.bin: $(MUSIC)
 	python2 Data/Song/midi2bin.py $< $@
