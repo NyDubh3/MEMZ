@@ -22,6 +22,7 @@ start:
 
 	mov si, compressed
 	mov di, image
+	jmp readcommand
 
 readcommand:
 	lodsb

@@ -1,25 +1,21 @@
 OUTPUT_FORMAT("binary")
 
 ENTRY(start)
-phys = 0x00010000;
+codea = 0x7c00;
+dataa = 0x0000;
 SECTIONS
 {
-  .text phys : AT(phys) {
+  .text : AT(codea) 
+  {
     code = .;
     *(.text)
     *(.rodata)
     . = ALIGN(4096);
   }
-  .data : AT(phys + (data - code))
+  .data : AT(dataa)
   {
     data = .;
     *(.data)
-    . = ALIGN(4096);
-  }
-  .bss : AT(phys + (bss - code))
-  {
-    bss = .;
-    *(.bss)
     . = ALIGN(4096);
   }
   end = .;

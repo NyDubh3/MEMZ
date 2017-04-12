@@ -1,9 +1,6 @@
 use16
 ;org 0x7c00
 
-section .data
-
-
 section .text
 
 %include "decompress.asm" ; Include decompressor part
@@ -168,7 +165,6 @@ startanimation:
 	repeat:
 		mov si, image
 		jmp nextframe
-	
 	
 daddr: equ 0x07e0
 compressed: equ 0x0000
