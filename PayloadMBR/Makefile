@@ -13,7 +13,11 @@ song.bin: $(MUSIC)
 data.o: song.bin image.bin
 	cat image.bin song.bin Data/Other/message.txt > data.o
 
-disk.o: kernel.asm
+Data/compressed.bin: data.o
+	cc Data/Compressor/compress.c -o Data/Compressor/compress
+	Data/Compressor/compress data.o Data/compressed.bin
+
+disk.o: kernel.asm decompress.asm Data/compressed.bin
 	nasm -o disk.o kernel.asm
 	
 disk.img: disk.o linker.ld data.o
