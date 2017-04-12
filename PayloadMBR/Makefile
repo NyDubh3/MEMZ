@@ -5,7 +5,7 @@ MUSIC  = Data/Song/nyan.mid
 all: disk.img
 
 image.bin: $(IMAGES)
-	python2 Data/Image/png2bin.py $< $@
+	python2 Data/Image/png2bin.py $(IMAGES) $@
 
 song.bin: $(MUSIC)
 	python2 Data/Song/midi2bin.py $< $@
