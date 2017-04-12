@@ -18,10 +18,10 @@ Data/compressed.bin: data.o
 	Data/Compressor/compress data.o Data/compressed.bin
 
 disk.o: kernel.asm decompress.asm Data/compressed.bin
-	nasm -o disk.o kernel.asm
+	nasm kernel.asm -o disk.o -f aout
 	
 disk.img: disk.o linker.ld data.o
-	ld -o disk.img -T linker.ld disk.o data.o
+	ld -o disk.img -T linker.ld disk.o -m elf_i386
 	
 test: disk.img
 	qemu-system-i386 -s -soundhw pcspk -fda disk.img

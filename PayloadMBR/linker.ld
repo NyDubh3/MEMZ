@@ -1,4 +1,5 @@
 OUTPUT_FORMAT("binary")
+
 ENTRY(startanimation)
 phys = 0x00010000;
 SECTIONS

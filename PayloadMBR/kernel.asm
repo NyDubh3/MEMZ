@@ -1,5 +1,5 @@
 use16
-org 0x7c00
+;org 0x7c00
 
 %include "decompress.asm" ; Include decompressor part
 
