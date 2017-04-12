@@ -30,10 +30,6 @@ Data/compressed.bin: build/data.o Data/Compressor/compress.c
 	$(CC) Data/Compressor/compress.c -o Data/Compressor/compress $(CCFLAGS)
 	Data/Compressor/compress build/data.o Data/compressed.bin
 
-
-#comp.o: decompress.asm
-#	nasm decompress.asm -o comp.o -f aout
-
 build/kernel.o: kernel.asm decompress.asm Data/compressed.bin
 	$(NASM) kernel.asm -o build/kernel.o $(ASFLAGS)
 	
