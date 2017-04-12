@@ -13,17 +13,21 @@ song.bin: $(MUSIC)
 data.o: song.bin image.bin
 	cat image.bin song.bin Data/Other/message.txt > data.o
 
-Data/compressed.bin: data.o
+Data/compressed.bin: data.o Data/Compressor/compress.c
 	cc Data/Compressor/compress.c -o Data/Compressor/compress
 	Data/Compressor/compress data.o Data/compressed.bin
 
-disk.o: kernel.asm decompress.asm Data/compressed.bin
-	nasm kernel.asm -o disk.o -f aout
+
+#comp.o: decompress.asm
+#	nasm decompress.asm -o comp.o -f aout
+
+kernel.o: kernel.asm decompress.asm Data/compressed.bin
+	nasm kernel.asm -o kernel.o -f aout
 	
-disk.img: disk.o linker.ld data.o
-	ld -o disk.img -T linker.ld disk.o -m elf_i386
+disk.img: kernel.o linker.ld Data/compressed.bin
+	ld -o disk.img -T linker.ld kernel.o -m elf_i386
 	
 test: disk.img
 	qemu-system-i386 -s -soundhw pcspk -fda disk.img
 	
-.PHONY: test
+.PHONY: test all

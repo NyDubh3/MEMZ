@@ -1,9 +1,12 @@
 use16
 ;org 0x7c00
 
-%include "decompress.asm" ; Include decompressor part
+section .data
+
 
 section .text
+
+%include "decompress.asm" ; Include decompressor part
 
 %macro sleep 2
 	; Use BIOS interrupt to sleep
@@ -165,6 +168,7 @@ startanimation:
 	repeat:
 		mov si, image
 		jmp nextframe
+	
 	
 daddr: equ 0x07e0
 compressed: equ 0x0000

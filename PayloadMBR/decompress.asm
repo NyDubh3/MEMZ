@@ -1,21 +1,27 @@
-mov bx, daddr
-mov es, bx
-mov ds, bx
+use16
+;org 0x7c00
 
-; Read from disk
-mov ax, 0x0204
-mov cx, 0x0002
-mov dh, 0
-mov bx, compressed
-int 13h
+global start
 
-xor ax, ax
-mov bx, ax
-mov cx, ax
-mov dx, ax
+start:
+	mov bx, daddr
+	mov es, bx
+	mov ds, bx
+	
+	; Read from disk
+	mov ax, 0x0204
+	mov cx, 0x0002
+	mov dh, 0
+	mov bx, compressed
+	int 13h
+	
+	 xor ax, ax
+	mov bx, ax
+	mov cx, ax
+	mov dx, ax
 
-mov si, compressed
-mov di, image
+	mov si, compressed
+	mov di, image
 
 readcommand:
 	lodsb

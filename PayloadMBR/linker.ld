@@ -1,6 +1,6 @@
 OUTPUT_FORMAT("binary")
 
-ENTRY(startanimation)
+ENTRY(start)
 phys = 0x00010000;
 SECTIONS
 {
