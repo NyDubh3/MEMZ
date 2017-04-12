@@ -3,6 +3,8 @@ org 0x7c00
 
 %include "decompress.asm" ; Include decompressor part
 
+section .text
+
 %macro sleep 2
 	; Use BIOS interrupt to sleep
 	push dx
