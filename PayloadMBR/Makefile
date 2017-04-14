@@ -1,4 +1,4 @@
-BUILDDIR = build
+BUILDDIR = Build
 
 CC       = cc
 PY       = python2
@@ -11,9 +11,14 @@ ASFLAGS  =
 IMAGES   = $(sort $(wildcard Data/Image/frames/*.png))
 MUSIC    = Data/Song/nyan.mid
 
+STAGE1ASM = $(wildcard Source/Stage1/*.asm)
+STAGE2ASM = $(wildcard Source/Stage2/*.asm)
+
+
 all: disk.img
 
 dir: $(BUILDDIR)
+
 $(BUILDDIR):
 	mkdir -p $(BUILDDIR)
 
@@ -26,14 +31,17 @@ $(BUILDDIR)/song.bin: $(MUSIC)
 $(BUILDDIR)/data.bin: $(BUILDDIR)/song.bin $(BUILDDIR)/image.bin
 	cat $(BUILDDIR)/image.bin $(BUILDDIR)/song.bin Data/Other/message.txt > $(BUILDDIR)/data.bin
 
-$(BUILDDIR)/compress: Data/Compressor/compress.c
-	$(CC) Data/Compressor/compress.c -o $@ $(CCFLAGS)
-	
-$(BUILDDIR)/compressed.bin: $(BUILDDIR)/data.bin $(BUILDDIR)/compress
-	$(BUILDDIR)/compress $(BUILDDIR)/data.bin $(BUILDDIR)/compressed.bin
+$(BUILDDIR)/compress: Source/Compressor/compress.c
+	$(CC) Source/Compressor/compress.c -o $@ $(CCFLAGS)
 
-disk.img: dir kernel.asm decompress.asm $(BUILDDIR)/compressed.bin
-	$(NASM) kernel.asm -o $@ $(ASFLAGS)
+$(BUILDDIR)/stage2.bin: $(STAGE2ASM) $(BUILDDIR)/data.bin
+	cd Source/Stage2 && $(NASM) main.asm -o ../../$@ $(ASFLAGS)
+	
+$(BUILDDIR)/stage2-compressed.bin: $(BUILDDIR)/stage2.bin $(BUILDDIR)/compress
+	$(BUILDDIR)/compress $(BUILDDIR)/stage2.bin $@
+	
+disk.img: dir $(STAGE1ASM) $(BUILDDIR)/stage2-compressed.bin
+	cd Source/Stage1 && $(NASM) main.asm -o ../../disk.img $(ASFLAGS)
 	
 test: disk.img
 	$(QEMU) -s -soundhw pcspk -fda disk.img

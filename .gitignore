@@ -244,3 +244,5 @@ _Pvt_Extensions
 *.bat
 *.zip
 /VCProject/MEMZ.VC.db
+build/
+Build/

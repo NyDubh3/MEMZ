@@ -1,7 +1,5 @@
-use16
-
 start:
-	mov bx, daddr
+	xor bx, bx
 	mov es, bx
 	mov ds, bx
 	
@@ -12,20 +10,20 @@ start:
 	mov bx, compressed
 	int 13h
 	
-	 xor ax, ax
+	xor ax, ax
 	mov bx, ax
 	mov cx, ax
 	mov dx, ax
 
 	mov si, compressed
-	mov di, image
+	mov di, decompressed
 	jmp readcommand
 
 readcommand:
 	lodsb
 	
 	cmp si, compressed+compsize
-	jae startanimation
+	jae exit
 	
 	cmp al, 128
 	jae newdata
@@ -54,7 +52,7 @@ olddata:
 	
 	mov dx, si
 	mov si, bx
-	add si, image
+	add si, decompressed
 	mov cl, al
 	
 	oldnextbyte:
@@ -67,3 +65,5 @@ olddata:
 		
 		mov si, dx
 		jmp readcommand
+
+exit:
