@@ -1,4 +1,3 @@
-
 CC      = cc
 PY      = python2
 NASM    = nasm
@@ -12,7 +11,7 @@ LDFLAGS = -T linker.ld -m elf_i386
 IMAGES  = $(sort $(wildcard Data/Image/frames/*.png))
 MUSIC   = Data/Song/nyan.mid
 
-all: disk.img dir
+all: dir disk.img
 
 dir:
 	mkdir -p build 
