@@ -7,7 +7,7 @@ def pitchconv(pitch):
 
 with open(sys.argv[2], "wb") as out:
 	pitches = [pitchconv(event.pitch) for event in pattern[1] if isinstance(event, midi.NoteOnEvent)]
-
+    
 	b = 0
 	d = 0
 	
