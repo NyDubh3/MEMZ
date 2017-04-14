@@ -1,45 +1,45 @@
-CC      = cc
-PY      = python2
-NASM    = nasm
-LD      = ld
-QEMU    = qemu-system-i386
+BUILDDIR = build
 
-CCFLAGS = 
-ASFLAGS = -f aout
-LDFLAGS = -T linker.ld -m elf_i386
+CC       = cc
+PY       = python2
+NASM     = nasm
+QEMU     = qemu-system-i386
 
-IMAGES  = $(sort $(wildcard Data/Image/frames/*.png))
-MUSIC   = Data/Song/nyan.mid
+CCFLAGS  = 
+ASFLAGS  = 
 
-all: dir disk.img
+IMAGES   = $(sort $(wildcard Data/Image/frames/*.png))
+MUSIC    = Data/Song/nyan.mid
 
-dir:
-	mkdir -p build 
+all: disk.img
 
-build/image.bin: $(IMAGES)
+dir: $(BUILDDIR)
+$(BUILDDIR):
+	mkdir -p $(BUILDDIR)
+
+$(BUILDDIR)/image.bin: $(IMAGES)
 	$(PY) Data/Image/png2bin.py $(IMAGES) $@
 
-build/song.bin: $(MUSIC)
-	$(PY) Data/Song/midi2bin.py $< $@
+$(BUILDDIR)/song.bin: $(MUSIC)
+	$(PY) Data/Song/midi2bin.py $(MUSIC) $@
 
-build/data.o: build/song.bin build/image.bin
-	cat build/image.bin build/song.bin Data/Other/message.txt > build/data.o
+$(BUILDDIR)/data.bin: $(BUILDDIR)/song.bin $(BUILDDIR)/image.bin
+	cat $(BUILDDIR)/image.bin $(BUILDDIR)/song.bin Data/Other/message.txt > $(BUILDDIR)/data.bin
 
-Data/compressed.bin: build/data.o Data/Compressor/compress.c
-	$(CC) Data/Compressor/compress.c -o Data/Compressor/compress $(CCFLAGS)
-	Data/Compressor/compress build/data.o Data/compressed.bin
-
-build/kernel.o: kernel.asm decompress.asm Data/compressed.bin
-	$(NASM) kernel.asm -o build/kernel.o $(ASFLAGS)
+$(BUILDDIR)/compress: Data/Compressor/compress.c
+	$(CC) Data/Compressor/compress.c -o $@ $(CCFLAGS)
 	
-disk.img: build/kernel.o linker.ld Data/compressed.bin
-	$(LD) -o disk.img build/kernel.o $(LDFLAGS)
+$(BUILDDIR)/compressed.bin: $(BUILDDIR)/data.bin $(BUILDDIR)/compress
+	$(BUILDDIR)/compress $(BUILDDIR)/data.bin $(BUILDDIR)/compressed.bin
+
+disk.img: dir kernel.asm decompress.asm $(BUILDDIR)/compressed.bin
+	$(NASM) kernel.asm -o $@ $(ASFLAGS)
 	
 test: disk.img
 	$(QEMU) -s -soundhw pcspk -fda disk.img
 
 clean:
-	rm build/* Data/Compressor/compress Data/compressed.bin	
+	rm -r $(BUILDDIR)
+	rm disk.img
 
-.PHONY: test all
-
+.PHONY: test clean all dir

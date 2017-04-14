@@ -1,7 +1,5 @@
 use16
-;org 0x7c00
-
-section .text
+org 0x7c00
 
 %include "decompress.asm" ; Include decompressor part
 
@@ -174,7 +172,7 @@ msglen: equ 76
 times 510 - ($ - $$) db 0
 dw 0xAA55 ; Boot sector signature
 
-comp: incbin "Data/compressed.bin"
+comp: incbin "build/compressed.bin" ; Hardcoded, I hope I can change that later
 compsize: equ $-comp
 
 times 4*1024 - ($ - $$) db 0
