@@ -1,5 +1,8 @@
 playNote:
-setDataSection
+
+; Set Data section
+mov cx, 0
+mov ds, cx
 
 lastIntroNote equ song+26*2
 lastNote      equ message

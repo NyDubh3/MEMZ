@@ -27,7 +27,3 @@ countNyan:
 		jne .loop
 	
 	.end:
-		; Set base address for video memory
-		;mov cx, 0xb800
-		;mov es, cx
-		

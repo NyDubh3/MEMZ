@@ -7,7 +7,9 @@ lastFrame:  equ special
 mov cx, 0xb800
 mov es, cx
 
-setDataSection
+; Set Data section
+mov cx, 0
+mov ds, cx
 
 mov si, [cs:frameIndex]
 
