@@ -28,13 +28,10 @@ $(BUILDDIR)/image.bin: $(IMAGES)
 $(BUILDDIR)/song.bin: $(MUSIC)
 	$(PY) Data/Song/midi2bin.py $(MUSIC) $@
 
-$(BUILDDIR)/data.bin: $(BUILDDIR)/song.bin $(BUILDDIR)/image.bin
-	cat $(BUILDDIR)/image.bin $(BUILDDIR)/song.bin > $(BUILDDIR)/data.bin
-
 $(BUILDDIR)/compress: Source/Compressor/compress.c
 	$(CC) Source/Compressor/compress.c -o $@ $(CCFLAGS)
 
-$(BUILDDIR)/stage2.bin: $(STAGE2ASM) $(BUILDDIR)/data.bin
+$(BUILDDIR)/stage2.bin: $(STAGE2ASM) $(BUILDDIR)/song.bin $(BUILDDIR)/image.bin
 	cd Source/Stage2 && $(NASM) main.asm -o ../../$@ $(ASFLAGS)
 	
 $(BUILDDIR)/stage2-compressed.bin: $(BUILDDIR)/stage2.bin $(BUILDDIR)/compress

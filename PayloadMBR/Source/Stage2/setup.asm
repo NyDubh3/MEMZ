@@ -10,14 +10,6 @@ xor di, di
 mov ax, 0x0003
 int 10h
 
-; Set base address for video memory
-mov cx, 0xb800
-mov es, cx
-
-; Set base address for input data
-mov cx, xdata
-mov ds, cx
-
 ; Put the stack somewhere safe
 mov sp, 0x2000
 

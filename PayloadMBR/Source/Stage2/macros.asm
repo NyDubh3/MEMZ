@@ -12,6 +12,6 @@
 
 %macro setDataSection 0
 	; Set base address for input data
-	mov cx, xdata
+	mov cx, 0
 	mov ds, cx
 %endmacro

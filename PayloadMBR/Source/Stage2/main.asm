@@ -23,14 +23,16 @@ noteTickCounter  db 0
 
 frameIndex dw 0
 
-soundIndex dw frameCount*frameSize
+soundIndex dw song
 soundWait  db 0
 
-align 0x10 ; Align Data so it can fit into a section
-xdata: equ 0x800+(($-$$)>>4) ; Workaround, might be changed later
+; Data
 
-; TODO Don't pack it together and hardcode
-data: incbin "../../Build/data.bin" ; Include the actual data
-songLength: equ 476
-message: db "Your computer has been trashed by the MEMZ trojan. Now enjoy the Nyan Cat..."
-msglen: equ $-message
+image:       incbin "../../Build/image.bin"
+imageLength: equ $-image
+
+song:        incbin "../../Build/song.bin"
+songLength:  equ $-song
+
+message:       db "Your computer has been trashed by the MEMZ trojan. Now enjoy the Nyan Cat..."
+messageLength: equ $-message

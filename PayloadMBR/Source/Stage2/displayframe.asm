@@ -1,7 +1,7 @@
 displayFrame:
 
-frameCount: equ 12          ; Don't hardcode that later
 frameSize:  equ (80*50) / 2 ; Raw binary size of a frame
+lastFrame:  equ song
 
 ; Set base address for video memory
 mov cx, 0xb800
@@ -16,7 +16,7 @@ ja .normalFrame
 jne .introFrame
 
 ; Reset the frame index
-mov si, 0
+mov si, image
 jmp .normalFrame
 
 ; Intro Frame
@@ -25,7 +25,7 @@ jmp .normalFrame
 	mov byte [cs:frameTickCounter], 7
 	
 	; Check if message is already fully displayed
-	cmp si, msglen
+	cmp si, messageLength
 	jae .end
 	
 	mov di, si
@@ -52,10 +52,10 @@ jmp .normalFrame
 		stosw
 	loop .draw
 
-	cmp si, frameCount*frameSize
+	cmp si, lastFrame
 	jne .end
 
-	mov si, 0
+	mov si, image
 
 .end:
 mov [cs:frameIndex], si

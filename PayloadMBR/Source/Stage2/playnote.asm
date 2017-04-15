@@ -1,8 +1,8 @@
 playNote:
 setDataSection
 
-lastIntroNote equ frameCount*frameSize+26*2
-lastNote      equ frameCount*frameSize+songLength
+lastIntroNote equ song+26*2
+lastNote      equ message
 
 mov si, [cs:soundIndex]
 
