@@ -8,7 +8,9 @@ QEMU     = qemu-system-i386
 CCFLAGS  = 
 ASFLAGS  = 
 
-IMAGES   = $(sort $(wildcard Data/Image/frames/*.png))
+FRAMES   = $(sort $(wildcard Data/Image/Frames/*.png))
+SPECIAL  = $(sort $(wildcard Data/Image/Special/*.png))
+
 MUSIC    = Data/Song/nyan.mid
 
 STAGE1ASM = $(wildcard Source/Stage1/*.asm)
@@ -22,8 +24,11 @@ dir: $(BUILDDIR)
 $(BUILDDIR):
 	mkdir -p $(BUILDDIR)
 
-$(BUILDDIR)/image.bin: $(IMAGES)
-	$(PY) Data/Image/png2bin.py $(IMAGES) $@
+$(BUILDDIR)/frames.bin: $(FRAMES)
+	$(PY) Data/Image/png2bin.py $(FRAMES) $@
+	
+$(BUILDDIR)/special.bin: $(SPECIAL)
+	$(PY) Data/Image/png2bin.py $(SPECIAL) $@
 
 $(BUILDDIR)/song.bin: $(MUSIC)
 	$(PY) Data/Song/midi2bin.py $(MUSIC) $@
@@ -31,7 +36,7 @@ $(BUILDDIR)/song.bin: $(MUSIC)
 $(BUILDDIR)/compress: Source/Compressor/compress.c
 	$(CC) Source/Compressor/compress.c -o $@ $(CCFLAGS)
 
-$(BUILDDIR)/stage2.bin: $(STAGE2ASM) $(BUILDDIR)/song.bin $(BUILDDIR)/image.bin
+$(BUILDDIR)/stage2.bin: $(STAGE2ASM) $(BUILDDIR)/song.bin $(BUILDDIR)/frames.bin $(BUILDDIR)/special.bin
 	cd Source/Stage2 && $(NASM) main.asm -o ../../$@ $(ASFLAGS)
 	
 $(BUILDDIR)/stage2-compressed.bin: $(BUILDDIR)/stage2.bin $(BUILDDIR)/compress

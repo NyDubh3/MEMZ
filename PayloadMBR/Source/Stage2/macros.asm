@@ -10,6 +10,7 @@
 	%%checkNext:
 %endmacro
 
+; Useless, will be removed soon
 %macro setDataSection 0
 	; Set base address for input data
 	mov cx, 0
