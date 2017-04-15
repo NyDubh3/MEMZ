@@ -16,4 +16,5 @@ comp:     incbin "../../Build/stage2-compressed.bin" ; Hardcoded build dir :(
 compsize: equ $-comp
 
 ; Align it to sectors
-align 512
+;align 512
+times 4096 - ($ - $$) db 0

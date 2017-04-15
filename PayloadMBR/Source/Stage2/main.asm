@@ -3,23 +3,13 @@ use16
 org 0x8000
 
 %include "setup.asm"
+%include "macros.asm"
 
 timerHandler:
 	pusha
 	
-	inc word [cs:frameTickCounter]
-	
-	checkNextFrame:
-		cmp word [cs:frameTickCounter], 10
-		jne checkNextNote
-
-		mov word [cs:frameTickCounter], 0
-		
-		%include "displayframe.asm"
-	
-	checkNextNote:
-		; Do the same for sound later
-		
+	checkTimer [cs:frameTickCounter], 10, "displayframe.asm"
+	checkTimer [cs:noteTickCounter],  10, "playnote.asm"
 	
 	; Acknowledge Interrupt
 	mov al, 0x20
@@ -28,10 +18,19 @@ timerHandler:
 	popa
 	iret
 
-frameTickCounter dw 0
+frameTickCounter db 0
+noteTickCounter  db 0
 
 frameIndex dw 0
 
-align 0x10
-xdata: equ 0x800+(($-$$)>>4)
-data: incbin "../../Build/data.bin"
+soundIndex dw frameCount*frameSize
+soundWait  db 0
+
+align 0x10 ; Align Data so it can fit into a section
+xdata: equ 0x800+(($-$$)>>4) ; Workaround, might be changed later
+
+; TODO Don't pack it together and hardcode
+data: incbin "../../Build/data.bin" ; Include the actual data
+songLength: equ 476
+message: db "Your computer has been trashed by the MEMZ trojan. Now enjoy the Nyan Cat..."
+msglen: equ $-message

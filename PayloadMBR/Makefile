@@ -29,7 +29,7 @@ $(BUILDDIR)/song.bin: $(MUSIC)
 	$(PY) Data/Song/midi2bin.py $(MUSIC) $@
 
 $(BUILDDIR)/data.bin: $(BUILDDIR)/song.bin $(BUILDDIR)/image.bin
-	cat $(BUILDDIR)/image.bin $(BUILDDIR)/song.bin Data/Other/message.txt > $(BUILDDIR)/data.bin
+	cat $(BUILDDIR)/image.bin $(BUILDDIR)/song.bin > $(BUILDDIR)/data.bin
 
 $(BUILDDIR)/compress: Source/Compressor/compress.c
 	$(CC) Source/Compressor/compress.c -o $@ $(CCFLAGS)

@@ -4,7 +4,7 @@ start:
 	mov ds, bx
 	
 	; Read from disk
-	mov ax, 0x0204
+	mov ax, 0x0208
 	mov cx, 0x0002
 	mov dh, 0
 	mov bx, compressed
