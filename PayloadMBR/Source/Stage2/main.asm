@@ -1,6 +1,6 @@
 ; This file contains the actual animation
 use16
-org 0x8000
+org 0x8E00
 
 %include "setup.asm"
 %include "macros.asm"

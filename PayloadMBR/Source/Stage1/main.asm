@@ -1,8 +1,8 @@
 use16
 org 0x7c00
 
-compressed:   equ 0x1000
-decompressed: equ 0x8000
+compressed:   equ 0x7e00
+decompressed: equ 0x8E00
 
 %include "decompress.asm" ; Decompress Code & Data
 jmp decompressed          ; Jump to the decompressed Data, booting the actual Kernel
