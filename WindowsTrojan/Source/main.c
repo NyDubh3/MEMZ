@@ -6,7 +6,7 @@ HFONT font;
 HWND dialog;
 #endif
 
-void main() {
+void start() {
 #ifndef CLEAN
 	int argc;
 	LPWSTR *argv = CommandLineToArgvW(GetCommandLineW(), &argc);

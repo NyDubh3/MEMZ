@@ -1,6 +1,6 @@
 // If this is defined, the trojan will disable all destructive payloads
 // and does display a GUI to manually control all of the non-destructive ones.
-//#define CLEAN
+#define CLEAN
 
 #ifdef CLEAN
 // Enable XP styles
@@ -20,14 +20,16 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 #pragma once
 
-#include <Windows.h>
-#include <TlHelp32.h>
-#include <Shlwapi.h>
-#include <Psapi.h>
-#include <CommCtrl.h>
+#include <windows.h>
+#include <tlhelp32.h>
+#include <shlwapi.h>
+#include <psapi.h>
+#include <commctrl.h>
 
 #include "data.h"
 #include "payloads.h"
+
+void start();
 
 int random();
 void strReverseW(LPWSTR str);
