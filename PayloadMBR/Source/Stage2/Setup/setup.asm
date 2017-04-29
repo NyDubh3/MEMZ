@@ -1,12 +1,3 @@
-; Make sure all registers are clean
-xor ax, ax
-xor bx, bx
-xor cx, cx
-xor dx, dx
-xor si, si
-xor di, di
-; =================================
-
 ; Set video mode
 mov ax, 0x0003
 int 10h
