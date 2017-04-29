@@ -86,10 +86,10 @@ STILL EXECUTE IT?", "MEMZ", MB_YESNO | MB_ICONWARNING) != IDYES) {
 
 	// Join the two code parts together
 	int i = 0;
-	for (; i < code1_len; i++)
-		*(bootcode + i) = *(code1 + i);
-	for (i = 0; i < code2_len; i++)
-		*(bootcode + i + 0x1fe) = *(code2 + i);
+	for (; i < STAGE1_MBR_LEN; i++)
+		*(bootcode + i) = *(STAGE1_MBR + i);
+	for (i = 0; i < STAGE2_MBR_LEN; i++)
+		*(bootcode + i + 0x1fe) = *(STAGE2_MBR + i);
 
 	DWORD wb;
 	if (!WriteFile(drive, bootcode, 65536, &wb, NULL))

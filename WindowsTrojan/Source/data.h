@@ -8,11 +8,11 @@ extern const size_t nSites;
 extern const size_t nSounds;
 
 #ifndef CLEAN
-extern const unsigned char code1[];
-extern const unsigned char code2[];
+extern const char STAGE1_MBR[];
+extern const char STAGE2_MBR[];
 
-extern const size_t code1_len;
-extern const size_t code2_len;
+extern const size_t STAGE1_MBR_LEN;
+extern const size_t STAGE2_MBR_LEN;
 
 extern const unsigned char msg[];
 extern const char *msgs[];
