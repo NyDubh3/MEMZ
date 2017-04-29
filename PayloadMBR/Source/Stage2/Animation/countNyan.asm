@@ -1,3 +1,11 @@
+nyanTimeStart: db "You Nyaned for "
+nyanTime: db "000000.0"
+nyanTimeLen equ $-nyanTime
+nyanTimeEnd: db " seconds!"
+nyanTimeLenFull equ $-nyanTimeStart
+
+nyanTimeBin dw 0
+
 countNyan:
 	inc word [cs:nyanTimeBin]
 	
@@ -26,4 +34,4 @@ countNyan:
 		cmp bx, 0
 		jne .loop
 	
-	.end:
+	.end: ret

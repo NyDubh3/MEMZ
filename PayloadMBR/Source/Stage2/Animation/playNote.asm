@@ -1,3 +1,6 @@
+soundIndex dw song
+soundWait  db 0
+
 playNote:
 
 ; Set Data section
@@ -34,4 +37,4 @@ mov [cs:soundWait], ch
 
 mov [cs:soundIndex], si
 
-.end:
+.end: ret

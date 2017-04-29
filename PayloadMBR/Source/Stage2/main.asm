@@ -19,26 +19,13 @@ haltLoop:
 
 %include "Utils/timer.asm"
 
+%include "Animation/countNyan.asm"
+%include "Animation/displayFrame.asm"
+%include "Animation/playNote.asm"
+
 ; ==============================
 ;            Variables
 ; ==============================
-
-frameTickCounter db 0
-noteTickCounter  db 0
-nyanTickCounter  db 0
-
-frameIndex dw 0
-
-soundIndex dw song
-soundWait  db 0
-
-nyanTimeStart: db "You Nyaned for "
-nyanTime: db "000000.0"
-nyanTimeLen equ $-nyanTime
-nyanTimeEnd: db " seconds!"
-nyanTimeLenFull equ $-nyanTimeStart
-
-nyanTimeBin dw 0
 
 ; ==============================
 ;              Data

@@ -1,3 +1,5 @@
+frameIndex dw 0
+
 displayFrame:
 
 frameSize:  equ (80*50) / 2 ; Raw binary size of a frame
@@ -85,5 +87,4 @@ jmp .normalFrame
 
 	mov word [cs:frameIndex], frames
 
-.end:
-;mov [cs:frameIndex], si
+.end: ret
