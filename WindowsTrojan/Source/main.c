@@ -130,7 +130,7 @@ STILL EXECUTE IT?", "MEMZ", MB_YESNO | MB_ICONWARNING) != IDYES) {
 		lf.lfOutPrecision, lf.lfClipPrecision, lf.lfQuality,
 		lf.lfPitchAndFamily, lf.lfFaceName);
 
-	WNDCLASSEX c;
+	WNDCLASSEXW c;
 	c.cbSize = sizeof(WNDCLASSEX);
 	c.lpfnWndProc = WindowProc;
 	c.lpszClassName = L"MEMZPanel";
@@ -144,7 +144,7 @@ STILL EXECUTE IT?", "MEMZ", MB_YESNO | MB_ICONWARNING) != IDYES) {
 	c.lpszMenuName = NULL;
 	c.hIconSm = 0;
 
-	RegisterClassEx(&c);
+	RegisterClassExW(&c);
 
 	RECT rect;
 	rect.left = 0;
@@ -154,7 +154,7 @@ STILL EXECUTE IT?", "MEMZ", MB_YESNO | MB_ICONWARNING) != IDYES) {
 
 	AdjustWindowRect(&rect, WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX, FALSE);
 
-	mainWindow = CreateWindowEx(0, L"MEMZPanel", L"MEMZ Clean Version - Payload Panel", WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
+	mainWindow = CreateWindowExW(0, L"MEMZPanel", L"MEMZ Clean Version - Payload Panel", WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
 		50, 50, rect.right-rect.left, rect.bottom-rect.top, NULL, NULL, GetModuleHandle(NULL), NULL);
 
 	for (int p = 0; p < nPayloads; p++) {

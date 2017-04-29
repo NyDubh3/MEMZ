@@ -2,6 +2,8 @@
 // and does display a GUI to manually control all of the non-destructive ones.
 #define CLEAN
 
+#define UNICODE
+
 #ifdef CLEAN
 // Enable XP styles
 #pragma comment(linker,"\"/manifestdependency:type='win32' \
