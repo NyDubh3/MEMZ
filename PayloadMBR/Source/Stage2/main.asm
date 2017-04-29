@@ -16,7 +16,9 @@ haltLoop:
 ; prevent them from triggering by including the code
 %include "Interrupts/timerHandler.asm"
 %include "Interrupts/keyboardHandler.asm"
-	
+
+%include "Utils/timer.asm"
+
 ; ==============================
 ;            Variables
 ; ==============================
