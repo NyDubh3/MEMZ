@@ -1,40 +1,39 @@
+lastIntroNote equ song+26*2
+lastNote      equ message
+
 soundIndex dw song
 soundWait  db 0
 
 playNote:
+	; Set Data section
+	mov cx, 0
+	mov ds, cx
 
-; Set Data section
-mov cx, 0
-mov ds, cx
+	mov si, [cs:soundIndex]
 
-lastIntroNote equ song+26*2
-lastNote      equ message
+	cmp si, lastNote
+	jb .nextNote
 
-mov si, [cs:soundIndex]
+	; Go back to the beginning
+	mov si, lastIntroNote
 
-cmp si, lastNote
-jb .nextNote
+	.nextNote:
+	dec byte [cs:soundWait]
+	cmp byte [cs:soundWait], -1
+	jne .end
 
-; Go back to the beginning
-mov si, lastIntroNote
+	lodsw
+	mov cx, ax
+	and ah, 00011111b
 
-.nextNote:
-dec byte [cs:soundWait]
-cmp byte [cs:soundWait], -1
-jne .end
+	; Set the frequency
+	out 0x42, al
+	mov al, ah
+	out 0x42, al
 
-lodsw
-mov cx, ax
-and ah, 00011111b
+	shr ch, 5
+	mov [cs:soundWait], ch
 
-; Set the frequency
-out 0x42, al
-mov al, ah
-out 0x42, al
+	mov [cs:soundIndex], si
 
-shr ch, 5
-mov [cs:soundWait], ch
-
-mov [cs:soundIndex], si
-
-.end: ret
+	.end: ret
