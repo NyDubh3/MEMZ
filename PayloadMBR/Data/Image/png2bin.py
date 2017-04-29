@@ -1,5 +1,4 @@
 import sys, math, struct, os
-#from io import BytesIO
 from PIL import Image
 
 doscolors = [
@@ -42,9 +41,14 @@ for imgf in sys.argv[1:-1]:
 	
 	for y in xrange(0, h, 2):
 		for x in xrange(w):
-			b = (nearest_color(img.getpixel((x, y))) << 4) | nearest_color(img.getpixel((x, y+1)))
-			buf += chr(b)
+			b = (nearest_color(img.getpixel((x, y))) << 4)
 			
+			if y < 48 or x >= len("You've Nyaned for 00000.0 seconds!"):
+				b |= nearest_color(img.getpixel((x, y+1)))
+			else:
+				b |= 15 if ((b>>4) < 8) else 0
+				
+			buf += chr(b)
 	img.close()
 
 with open(sys.argv[::-1][0], "wb") as out:

@@ -3,12 +3,6 @@ frameIndex dw 0
 frameSize:  equ (80*50) / 2 ; Raw binary size of a frame
 lastFrame:  equ special
 
-%macro setVideoMemory 0
-	; Set the extra segment to video memory
-	mov cx, 0xb800
-	mov es, cx
-%endmacro
-
 displayFrame:
 	setVideoMemory
 
@@ -24,6 +18,13 @@ displayFrame:
 
 	; Reset the frame index when the intro is done
 	mov si, frames
+	
+	; Revert the message characters
+	mov di, 0
+	mov cx, messageLength
+	mov ax, 0x00DC
+	rep stosw
+	
 	jmp .normalFrame
 
 	; Intro Frame
@@ -42,6 +43,6 @@ displayFrame:
 
 	.end: ret
 
+%include "Animation/Image/initDrawing.asm"
 %include "Animation/Image/drawIntroFrame.asm"
 %include "Animation/Image/drawNormalFrame.asm"
-%include "Animation/Image/drawNyanCounter.asm"

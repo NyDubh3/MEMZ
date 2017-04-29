@@ -18,3 +18,6 @@ mov sp, 0x2000
 
 ; Setup the PC speaker
 %include "Setup/setupSpeaker.asm"
+
+; Setup the screen and Nyan Counter
+call initDrawing

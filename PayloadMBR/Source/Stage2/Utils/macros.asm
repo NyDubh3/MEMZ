@@ -20,3 +20,9 @@
 	mov word [es:(%1+8)*4], %2  ; Interrupt Handler
 	mov word [es:(%1+8)*4+2], 0 ; Segment 0x0000
 %endmacro
+
+%macro setVideoMemory 0
+	; Set the extra segment to video memory
+	mov cx, 0xb800
+	mov es, cx
+%endmacro

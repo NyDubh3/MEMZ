@@ -24,10 +24,10 @@ dir: $(BUILDDIR)
 $(BUILDDIR):
 	mkdir -p $(BUILDDIR)
 
-$(BUILDDIR)/frames.bin: $(FRAMES)
+$(BUILDDIR)/frames.bin: $(FRAMES) Data/Image/png2bin.py
 	$(PY) Data/Image/png2bin.py $(FRAMES) $@
 	
-$(BUILDDIR)/special.bin: $(SPECIAL)
+$(BUILDDIR)/special.bin: $(SPECIAL) Data/Image/png2bin.py
 	$(PY) Data/Image/png2bin.py $(SPECIAL) $@
 
 $(BUILDDIR)/song.bin: $(MUSIC)

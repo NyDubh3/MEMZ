@@ -1,20 +1,20 @@
-nyanTimeStart: db "You Nyaned for "
-nyanTime: db "000000.0"
-nyanTimeLen equ $-nyanTime
-nyanTimeEnd: db " seconds!"
-nyanTimeLenFull equ $-nyanTimeStart
+nyanTimeString: db "You've Nyaned for 00000.0 seconds!"
+nyanTimeStringLen: equ $-nyanTimeString
+nyanTimeVideoStart: equ 3840
 
 nyanTimeBin dw 0
 
 countNyan:
+	setVideoMemory
+
 	inc word [cs:nyanTimeBin]
 	
-	mov bx, nyanTimeLen
+	mov bx, nyanTimeStringLen*2
 	
 	.loop:
-		dec bx
+		sub bx, 2
 		
-		mov al, [cs:nyanTime+bx]
+		mov al, [es:nyanTimeVideoStart+bx]
 		cmp al, '0'
 		jb .next
 		
@@ -22,13 +22,13 @@ countNyan:
 		ja .next
 		
 		inc al
-		mov [cs:nyanTime+bx], al
+		mov [es:nyanTimeVideoStart+bx], al
 		
 		cmp al, '9'+1
 		jne .end
 		
 		mov al, '0'
-		mov [cs:nyanTime+bx], al
+		mov [es:nyanTimeVideoStart+bx], al
 		
 		.next:
 		cmp bx, 0

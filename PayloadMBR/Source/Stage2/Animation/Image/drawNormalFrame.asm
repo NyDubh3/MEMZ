@@ -12,17 +12,15 @@ drawNormalFrame:
 	
 	; Display the frame
 	.displayFrame:
-		mov ah, 220 ; Set the block character to use
-		mov di, 1   ; Offset one byte
+		mov di, 1 ; Offset one byte
 		
 		mov cx, frameSize
 		.draw:
 			lodsb
-			stosw
+			stosb
+			inc di
 		loop .draw
 		
 		mov [cs:frameIndex], si
-		
-		call drawNyanCounter
 		
 	.end: ret
