@@ -1,23 +1,25 @@
-; This file contains the actual animation
+; This is where the program starts after decompression
+
 use16
 org 0x8E00
 
-%include "setup.asm"
-%include "macros.asm"
+%include "Utils/macros.asm"
+%include "Setup/setup.asm"
 
-timerHandler:
-	pusha
+; Everything should be already set up, so the only
+; thing we need to do here is to wait for interrupts
+haltLoop:
+	hlt
+	jmp haltLoop
+
+; Include the interrupt handlers after the loop to
+; prevent them from triggering by including the code
+%include "Interrupts/timerHandler.asm"
+%include "Interrupts/keyboardHandler.asm"
 	
-	checkTimer [cs:frameTickCounter],  8, "displayframe.asm"
-	checkTimer [cs:noteTickCounter],  12, "playnote.asm"
-	checkTimer [cs:nyanTickCounter],  10, "countnyan.asm"
-	
-	; Acknowledge Interrupt
-	mov al, 0x20
-	out 0x20, al
-	
-	popa
-	iret
+; ==============================
+;            Variables
+; ==============================
 
 frameTickCounter db 0
 noteTickCounter  db 0
@@ -36,7 +38,9 @@ nyanTimeLenFull equ $-nyanTimeStart
 
 nyanTimeBin dw 0
 
-; Data
+; ==============================
+;              Data
+; ==============================
 
 frames:        incbin "../../Build/frames.bin"
 framesLength:  equ $-frames

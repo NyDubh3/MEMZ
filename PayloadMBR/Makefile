@@ -14,7 +14,7 @@ SPECIAL  = $(sort $(wildcard Data/Image/Special/*.png))
 MUSIC    = Data/Song/nyan.mid
 
 STAGE1ASM = $(wildcard Source/Stage1/*.asm)
-STAGE2ASM = $(wildcard Source/Stage2/*.asm)
+STAGE2ASM = $(shell find Source/Stage2 -name *.asm -type f)
 
 
 all: disk.img
