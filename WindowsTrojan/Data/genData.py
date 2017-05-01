@@ -68,7 +68,7 @@ with open(sys.argv[1], "w") as cf:
 		cf.write('#include "Data.h"\n')
 		
 		hf.write("#pragma once\n")
-		hf.write('#include "../Source/memz.h"\n')
+		hf.write('#include "../Source/MEMZ.h"\n')
 		
 		# MBR Binary
 		with open(MBRCODE, "rb") as inf:
