@@ -1,5 +1,3 @@
-BUILDDIR = Build
-
 CC       = cc
 PY       = python2
 NASM     = nasm
@@ -8,10 +6,13 @@ QEMU     = qemu-system-i386
 CCFLAGS  = 
 ASFLAGS  = 
 
+MUSIC    = Data/Song/nyan.mid
+
+# Don't change the build directory, it is hardcoded on other places
+BUILDDIR = Build
+
 FRAMES   = $(sort $(wildcard Data/Image/Frames/*.png))
 SPECIAL  = $(sort $(wildcard Data/Image/Special/*.png))
-
-MUSIC    = Data/Song/nyan.mid
 
 STAGE1ASM = $(wildcard Source/Stage1/*.asm)
 STAGE2ASM = $(shell find Source/Stage2 -name *.asm -type f)
