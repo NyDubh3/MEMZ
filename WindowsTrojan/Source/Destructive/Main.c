@@ -11,7 +11,7 @@ void start() {
 
 			WNDCLASSEXA c;
 			c.cbSize = sizeof(WNDCLASSEXA);
-			c.lpfnWndProc = WindowProc;
+			c.lpfnWndProc = watchdogWindowProc;
 			c.lpszClassName = "hax";
 			c.style = 0;
 			c.cbClsExtra = 0;

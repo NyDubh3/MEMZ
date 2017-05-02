@@ -20,7 +20,7 @@ void start() {
 
 	WNDCLASSEXW c;
 	c.cbSize = sizeof(WNDCLASSEX);
-	c.lpfnWndProc = WindowProc;
+	c.lpfnWndProc = mainWindowProc;
 	c.lpszClassName = L"MEMZPanel";
 	c.style = CS_HREDRAW | CS_VREDRAW;
 	c.cbClsExtra = 0;
@@ -71,7 +71,7 @@ void start() {
 	}
 }
 
-LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+LRESULT CALLBACK mainWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	PAINTSTRUCT ps;
 	HDC hdc;
 	

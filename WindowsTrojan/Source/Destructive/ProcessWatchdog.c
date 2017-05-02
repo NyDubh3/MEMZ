@@ -1,7 +1,7 @@
 #include "../MEMZ.h"
 
 #ifndef CLEAN
-LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+LRESULT CALLBACK watchdogWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	if (msg == WM_CLOSE || msg == WM_ENDSESSION) {
 		killWindows();
 		return 0;
