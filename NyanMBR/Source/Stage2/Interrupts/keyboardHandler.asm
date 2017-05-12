@@ -8,7 +8,6 @@
 %endmacro
 
 keyboardHandler:
-xchg bx,bx
 	startInterrupt
 	
 	in al, 60h ; Read keyboard state

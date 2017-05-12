@@ -15,7 +15,6 @@ nyanTickCounter  db 0
 %endmacro
 
 timerHandler:
-xchg bx,bx
 	startInterrupt
 	
 	onTimer [frameTickCounter],  8, displayFrame
