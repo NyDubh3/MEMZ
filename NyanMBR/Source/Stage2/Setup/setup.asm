@@ -7,9 +7,6 @@ mov ax, 0x1003
 mov bl, 0
 int 10h
 
-; Put the stack somewhere safe
-mov sp, 0x2000
-
 ; Setup the main timer
 %include "Setup/setupTimer.asm"
 

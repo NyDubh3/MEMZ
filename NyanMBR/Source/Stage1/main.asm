@@ -1,11 +1,28 @@
 use16
 org 0x7c00
 
-compressed:   equ 0x7e00
-decompressed: equ 0x8E00
+;setup cpu
+
+;correct cs
+jmp 0x0000:correct_cs
+correct_cs:
+
+; setup stack properly
+cli
+xor ax, ax
+mov ss, ax
+mov sp, 0x7BF0
+sti
 
 %include "decompress.asm" ; Decompress Code & Data
-jmp decompressed          ; Jump to the decompressed Data, booting the actual Kernel
+
+; Prepare the CPU segments
+
+mov ax, 0x2000
+mov ds, ax
+mov es, ax
+
+jmp 0x2000:0x0000         ; Jump to the decompressed Data, booting the actual "Kernel"
 
 ; Boot sector signature
 times 510 - ($ - $$) db 0

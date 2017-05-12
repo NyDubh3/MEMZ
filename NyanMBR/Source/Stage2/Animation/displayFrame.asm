@@ -4,15 +4,16 @@ frameSize:  equ (80*50) / 2 ; Raw binary size of a frame
 lastFrame:  equ special
 
 displayFrame:
-	setVideoMemory
+	; Set the extra segment to video memory
+	push es
+	push 0xb800
+	pop es
+	
+	mov di, 0
 
-	; Set data section
-	mov cx, 0
-	mov ds, cx
+	mov si, [frameIndex]
 
-	mov si, [cs:frameIndex]
-
-	cmp word [cs:soundIndex], lastIntroNote
+	cmp word [soundIndex], lastIntroNote
 	ja .normalFrame
 	jne .introFrame
 
@@ -37,11 +38,13 @@ displayFrame:
 		call drawNormalFrame
 	
 	; Reset frame index when the last frame has been reached
-	cmp word [cs:frameIndex], lastFrame
+	cmp word [frameIndex], lastFrame
 	jb .end
-	mov word [cs:frameIndex], frames
+	mov word [frameIndex], frames
 
-	.end: ret
+	.end:
+	    pop es
+	    ret
 
 %include "Animation/Image/initDrawing.asm"
 %include "Animation/Image/drawIntroFrame.asm"
