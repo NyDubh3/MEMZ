@@ -5,9 +5,14 @@ nyanTimeVideoStart: equ 3840
 nyanTimeBin dw 0
 
 countNyan:
-	setVideoMemory
+	; Set the extra segment to video memory
+	push es
+	push 0xb800
+	pop es
+	
+	mov di, 0
 
-	inc word [cs:nyanTimeBin]
+	inc word [nyanTimeBin]
 	
 	mov bx, nyanTimeStringLen*2
 	
@@ -34,4 +39,6 @@ countNyan:
 		cmp bx, 0
 		jne .loop
 	
-	.end: ret
+	.end:
+	    pop es
+	    ret

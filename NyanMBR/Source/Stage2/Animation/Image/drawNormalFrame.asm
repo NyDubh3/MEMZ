@@ -1,5 +1,9 @@
 drawNormalFrame:
-	mov ax, [cs:nyanTimeBin]
+	push es
+	push 0xb800
+	pop es
+	
+	mov ax, [nyanTimeBin]
 	mov dx, 0
 	mov bx, 10
 	div bx
@@ -21,6 +25,8 @@ drawNormalFrame:
 			inc di
 		loop .draw
 		
-		mov [cs:frameIndex], si
+		mov [frameIndex], si
 		
-	.end: ret
+	.end:
+	    pop es
+	    ret

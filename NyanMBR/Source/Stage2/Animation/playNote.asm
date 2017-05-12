@@ -5,11 +5,8 @@ soundIndex dw song
 soundWait  db 0
 
 playNote:
-	; Set Data section
-	mov cx, 0
-	mov ds, cx
 
-	mov si, [cs:soundIndex]
+	mov si, [soundIndex]
 
 	cmp si, lastNote
 	jb .nextNote
@@ -18,8 +15,8 @@ playNote:
 	mov si, lastIntroNote
 
 	.nextNote:
-	dec byte [cs:soundWait]
-	cmp byte [cs:soundWait], -1
+	dec byte [soundWait]
+	cmp byte [soundWait], -1
 	jne .end
 
 	lodsw
@@ -32,8 +29,8 @@ playNote:
 	out 0x42, al
 
 	shr ch, 5
-	mov [cs:soundWait], ch
+	mov [soundWait], ch
 
-	mov [cs:soundIndex], si
+	mov [soundIndex], si
 
 	.end: ret

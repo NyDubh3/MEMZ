@@ -15,10 +15,11 @@ nyanTickCounter  db 0
 %endmacro
 
 timerHandler:
+xchg bx,bx
 	startInterrupt
 	
-	onTimer [cs:frameTickCounter],  8, displayFrame
-	onTimer [cs:noteTickCounter],  12, playNote
-	onTimer [cs:nyanTickCounter],  10, countNyan
+	onTimer [frameTickCounter],  8, displayFrame
+	onTimer [noteTickCounter],  12, playNote
+	onTimer [nyanTickCounter],  10, countNyan
 	
 	finishInterrupt

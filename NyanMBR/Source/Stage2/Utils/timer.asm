@@ -3,7 +3,7 @@ currentClock dw defaultClock
 
 ; Updates the current timer value
 setTimer:
-	mov ax, [cs:currentClock]
+	mov ax, [currentClock]
 	out 0x40, al
 	mov al, ah
 	out 0x40, al
@@ -20,7 +20,7 @@ clockDiv     equ 3
 
 ; Speeds up the current timer
 speedUp:
-	mov ax, [cs:currentClock]
+	mov ax, [currentClock]
 	
 	mov bx, clockPreMul
 	mul bx
@@ -35,7 +35,7 @@ speedUp:
 	mov ax, minClock
 	
 	.resetTimer:
-		mov [cs:currentClock], ax
+		mov [currentClock], ax
 		call setTimer
 	
 	ret

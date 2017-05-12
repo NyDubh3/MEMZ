@@ -1,13 +1,14 @@
 ; This is where the program starts after decompression
 
 use16
-org 0x8E00
+org 0
 
 %include "Utils/macros.asm"
 %include "Setup/setup.asm"
 
 ; Everything should be already set up, so the only
 ; thing we need to do here is to wait for interrupts
+
 haltLoop:
 	hlt
 	jmp haltLoop

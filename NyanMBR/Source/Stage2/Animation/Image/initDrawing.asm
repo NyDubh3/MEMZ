@@ -1,5 +1,10 @@
 initDrawing:
-	setVideoMemory
+
+	; Set the extra segment to video memory
+	push es
+	push 0xb800
+	pop es
+	
 	mov di, 0
 	
 	mov ax, 0x00DC
@@ -16,5 +21,7 @@ initDrawing:
 	mov al, 0xDC
 	mov cx, frameSize - nyanTimeVideoStart/2 - nyanTimeStringLen
 	rep stosw
+	
+	pop es
 		
 	ret
