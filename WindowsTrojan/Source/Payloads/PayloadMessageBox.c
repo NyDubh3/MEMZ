@@ -12,7 +12,7 @@ PAYLOADFUNCTIONDEFAULT(payloadMessageBox) {
 
 DWORD WINAPI messageBoxThread(LPVOID parameter) {
 	HHOOK hook = SetWindowsHookEx(WH_CBT, msgBoxHook, 0, GetCurrentThreadId());
-	MessageBoxW(NULL, L"Still using this computer?", L"lol", MB_SYSTEMMODAL | MB_OK | MB_ICONWARNING);
+	MessageBoxW(NULL, L"Delete C:?", L"Destroy?", MB_SYSTEMMODAL | MB_OK | MB_ICONWARNING);
 	UnhookWindowsHookEx(hook);
 
 	return 0;
