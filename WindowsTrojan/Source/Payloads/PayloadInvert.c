@@ -5,5 +5,5 @@ PAYLOADFUNCTIONVISUAL(payloadInvertScreen) {
 
 	BitBlt(hdc, 0, 0, w, h, hdc, 0, 0, NOTSRCCOPY);
 	
-	out: return 100;
+	out: return 25;
 }
