@@ -1,5 +1,5 @@
-# MEMZ
-A trojan made for Danooct1's User Made Malware Series.
+# TheMEMZ
+LOL
 
 I am not responsible for any damage made using this trojan.
 
@@ -18,4 +18,4 @@ If you want to use the exe to batch converter, don't forget to append -zip to it
 
 You'll also need Visual Studio 2015 to build the actual Trojan. Make sure you selected the Release configuration, because Debug is not configured properly.
 
-The ASM code may look very noobish, but this is my first big thing written in assembly.
+
